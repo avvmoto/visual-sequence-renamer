@@ -34,6 +34,24 @@ jobs:
       - name: Sync dependencies
         run: uv sync --all-groups
 
+      # PySide6 / pytest-qt が QtGui 読み込み時に libEGL 等を要求する（ヘッドレスでも共有ライブラリが必要）
+      - name: Install Qt EGL / XCB dependencies (headless)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libegl1 \
+            libgl1 \
+            libxkbcommon-x11-0 \
+            libxcb-cursor0 \
+            libxcb-xinerama0 \
+            libxcb-icccm4 \
+            libxcb-image0 \
+            libxcb-keysyms1 \
+            libxcb-randr0 \
+            libxcb-render-util0 \
+            libxcb-shape0 \
+            libxcb-xfixes0
+
       - name: Run tests
         run: uv run pytest
 
