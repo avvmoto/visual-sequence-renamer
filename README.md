@@ -1,6 +1,8 @@
 # ならべて連番リネーマー（Visual Sequence Renamer）
 
-![](docs/public/images/trust/renamer.mp4)
+![](https://github.com/user-attachments/assets/f3bde6e6-684d-46e4-b38e-7bf7a5d41dc7)
+
+
 
 **無料のフリーソフト**です。ソースコードは公開された **オープンソース（MIT License）** であり、利用・改変・再配布はライセンスの範囲内で自由です。
 
