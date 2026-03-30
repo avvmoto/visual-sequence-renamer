@@ -7,6 +7,8 @@ name = "renamer"
 version = "0.1.0"
 description = "Smart File Renamer — 並べ替えと連番リネームのデスクトップアプリ"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
 dependencies = [
     "PySide6>=6.6.0",
