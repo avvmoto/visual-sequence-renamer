@@ -32,6 +32,8 @@ jobs:
           --clean
           --name renamer
           --windowed
+          --icon src/app/resources/app_icon.ico
+          --add-data "src/app/resources;app/resources"
           --paths src
           --collect-all PySide6
           --collect-all shiboken6

@@ -5,10 +5,12 @@ from __future__ import annotations
 import logging
 import signal
 import sys
+from typing import cast
 
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication
 
+from app.application_icon import build_application_icon
 from app.ui.main_window import MainWindow
 
 logger = logging.getLogger(__name__)
@@ -17,7 +19,11 @@ logger = logging.getLogger(__name__)
 def main() -> None:
     """アプリを起動する。"""
     logging.basicConfig(level=logging.INFO)
-    app = QApplication.instance() or QApplication(sys.argv)
+    _existing = QApplication.instance()
+    app = cast(QApplication, _existing) if _existing is not None else QApplication(sys.argv)
+    _icon = build_application_icon()
+    if not _icon.isNull():
+        app.setWindowIcon(_icon)
 
     def _on_sigint(_signum: int, _frame: object | None) -> None:
         """ターミナルで Ctrl+C (SIGINT) が来たらイベントループを終了する。"""

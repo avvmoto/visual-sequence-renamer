@@ -21,6 +21,9 @@ renamer = "app.main:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+app = ["resources/*.png", "resources/*.ico"]
+
 [dependency-groups]
 dev = [
     "ruff>=0.8.0",

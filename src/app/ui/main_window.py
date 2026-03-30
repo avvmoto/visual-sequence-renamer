@@ -20,6 +20,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from app.application_icon import build_application_icon
 from app.core.image_processor import icon_for_path
 from app.core.rename import pairs_from_serializable
 from app.core.rename_thread import RenameThread, UndoRenameThread
@@ -45,6 +46,9 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Smart File Renamer")
         self.resize(800, 520)
+        _win_icon = build_application_icon()
+        if not _win_icon.isNull():
+            self.setWindowIcon(_win_icon)
 
         self._allowed_root: Path | None = None
         self._undo_pairs: list[tuple[Path, Path]] | None = None

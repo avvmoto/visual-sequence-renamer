@@ -42,6 +42,32 @@ uv sync --all-groups
 
 Windows 向け単体 EXE のビルド例（PyInstaller）は [.github/workflows/build.yml](.github/workflows/build.yml) を参照してください。
 
+## アイコンの差し替え
+
+アプリ表示用は `src/app/resources/app_icon.png`、Windows の EXE アイコンは `src/app/resources/app_icon.ico` です。ソースは**正方形**（例: 1024×1024）を推奨します。横長・縦長のまま `resize` だけで ICO を作ると、短辺方向に引き伸ばされて**縮尺比が崩れる**ので注意してください。
+
+**PNG を差し替えたあと**は、次のコマンドで「中央を正方形にクロップ → 1024×1024 にそろえる → PNG を上書き → ICO を生成」まで一気に行えます（PyInstaller の `--icon` が参照する ICO も更新されます）。
+
+```bash
+uv run python -c "
+from pathlib import Path
+from PIL import Image
+
+path = Path('src/app/resources/app_icon.png')
+img = Image.open(path).convert('RGBA')
+w, h = img.size
+side = min(w, h)
+left = (w - side) // 2
+top = (h - side) // 2
+square = img.crop((left, top, left + side, top + side))
+square = square.resize((1024, 1024), Image.Resampling.LANCZOS)
+square.save(path, format='PNG')
+sizes = [256, 128, 64, 48, 32, 24, 16]
+icos = [square.resize((s, s), Image.Resampling.LANCZOS) for s in sizes]
+icos[0].save('src/app/resources/app_icon.ico', format='ICO', append_images=icos[1:])
+"
+```
+
 ## ライセンス
 
 [MIT License](LICENSE)
