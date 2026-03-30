@@ -1,5 +1,9 @@
 """カスタム Qt ウィジェット。"""
 
+from __future__ import annotations
+
+import os
+import sys
 from pathlib import Path
 
 from PySide6.QtCore import QMimeData, QModelIndex, QPersistentModelIndex, QRect, QSize, Qt, Signal
@@ -17,12 +21,60 @@ from PySide6.QtWidgets import (
     QApplication,
     QListView,
     QListWidget,
+    QListWidgetItem,
     QSizePolicy,
     QStyle,
     QStyledItemDelegate,
     QStyleOptionViewItem,
     QWidget,
 )
+
+
+class FileListItemRoles:
+    """``QListWidgetItem`` に保存するカスタム ``DataRole``。"""
+
+    PATH = int(Qt.ItemDataRole.UserRole)
+    CREATED_TS = int(Qt.ItemDataRole.UserRole) + 1
+    MODIFIED_TS = int(Qt.ItemDataRole.UserRole) + 2
+    INSERT_ORDER = int(Qt.ItemDataRole.UserRole) + 3
+
+
+def file_stat_timestamps(path: Path) -> tuple[float, float]:
+    """ファイルの作成・更新時刻（エポック秒）を返す。
+
+    作成時刻は OS により取得できない場合があり、そのときは更新時刻にフォールバックする。
+
+    Args:
+        path: ファイルパス（存在する想定）。
+
+    Returns:
+        ``(作成時刻, 更新時刻)`` のタプル。
+    """
+    st = path.stat()
+    mtime = float(st.st_mtime)
+    if sys.platform == "darwin":
+        birth = getattr(st, "st_birthtime", None)
+        ctime = float(birth) if birth is not None else float(st.st_ctime)
+    elif os.name == "nt":
+        ctime = float(st.st_ctime)
+    else:
+        birth = getattr(st, "st_birthtime", None)
+        ctime = float(birth) if birth is not None else mtime
+    return ctime, mtime
+
+
+def apply_file_item_metadata(item: QListWidgetItem, path: Path, insert_order: int) -> None:
+    """パスに応じたタイムスタンプと追加順をアイテムに格納する。
+
+    Args:
+        item: リストアイテム。
+        path: 参照するファイルパス。
+        insert_order: 追加順の連番。
+    """
+    ctime, mtime = file_stat_timestamps(path)
+    item.setData(FileListItemRoles.CREATED_TS, ctime)
+    item.setData(FileListItemRoles.MODIFIED_TS, mtime)
+    item.setData(FileListItemRoles.INSERT_ORDER, insert_order)
 
 
 def _accept_file_url_drop(event: QDragEnterEvent | QDragMoveEvent | QDropEvent) -> None:
@@ -188,6 +240,8 @@ class FileDropListWidget(QListWidget):
 
     #: 第1引数: ローカルファイルパス一覧。第2引数: 挿入位置の行（0〜件数、件数は末尾相当）。
     files_dropped = Signal(list, int)
+    #: リスト内ドラッグで並べが変わった直後（プログラムによる並べ替え中は送出しない）。
+    order_manually_changed = Signal()
 
     def __init__(self, parent: QWidget | None = None) -> None:
         """ウィジェットを初期化する。
@@ -226,6 +280,30 @@ class FileDropListWidget(QListWidget):
 
         self.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
+        self._insert_order_seq = 0
+        self._suppress_manual_order_notification = False
+
+    def set_suppress_manual_order_notification(self, suppress: bool) -> None:
+        """``True`` の間は手動並べ替えシグナルを送出しない（ソート処理用）。
+
+        Args:
+            suppress: 抑制するなら True。
+        """
+        self._suppress_manual_order_notification = suppress
+
+    def next_insert_order(self) -> int:
+        """追加順ソート用の連番を返し、内部カウンタを進める。
+
+        Returns:
+            1 始まりの追加順番号。
+        """
+        self._insert_order_seq += 1
+        return self._insert_order_seq
+
+    def reset_insert_order_counter(self) -> None:
+        """リストを空にしたあとなどに追加順カウンタをリセットする。"""
+        self._insert_order_seq = 0
 
     def _insert_row_for_external_file_drop(self, event: QDropEvent) -> int:
         """ドロップ座標に応じた挿入行を返す（アイテム上はその行の直前に挿入）。
@@ -287,6 +365,8 @@ class FileDropListWidget(QListWidget):
         mime = event.mimeData()
         if _drag_originates_from_this_widget(self, event) or mime.hasFormat(_QT_ITEM_MODEL_MIME):
             super().dropEvent(event)
+            if not self._suppress_manual_order_notification:
+                self.order_manually_changed.emit()
             return
         if _mime_has_local_file_urls(mime):
             paths: list[Path] = []
