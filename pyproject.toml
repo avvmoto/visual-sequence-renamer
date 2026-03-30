@@ -22,7 +22,7 @@ renamer = "app.main:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-app = ["resources/*.png", "resources/*.ico"]
+app = ["resources/*.png", "resources/*.ico", "resources/*.icns"]
 
 [dependency-groups]
 dev = [
