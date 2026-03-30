@@ -82,28 +82,28 @@ jobs:
         run: uv sync --group build
 
       - name: Build single-file executable
-        run: uv run pyinstaller --noconfirm --clean SmartRenamer.spec
+        run: uv run pyinstaller --noconfirm --clean VisualSequenceRenamer.spec
 
-      - name: Create SmartRenamer.zip
+      - name: Create VisualSequenceRenamer.zip
         shell: pwsh
         run: |
-          if (-not (Test-Path dist/SmartRenamer.exe)) { throw "dist/SmartRenamer.exe not found" }
-          Compress-Archive -LiteralPath dist/SmartRenamer.exe -DestinationPath dist/SmartRenamer.zip -Force
+          if (-not (Test-Path dist/VisualSequenceRenamer.exe)) { throw "dist/VisualSequenceRenamer.exe not found" }
+          Compress-Archive -LiteralPath dist/VisualSequenceRenamer.exe -DestinationPath dist/VisualSequenceRenamer.zip -Force
 
       - name: Upload for release (tag)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
           name: release-asset-windows
-          path: dist/SmartRenamer.zip
+          path: dist/VisualSequenceRenamer.zip
           if-no-files-found: error
 
       - name: Upload Windows build (branch)
         if: startsWith(github.ref, 'refs/heads/build/')
         uses: actions/upload-artifact@v4
         with:
-          name: smartrenamer-windows-${{ github.sha }}
-          path: dist/SmartRenamer.zip
+          name: visualsequencerenamer-windows-${{ github.sha }}
+          path: dist/VisualSequenceRenamer.zip
           if-no-files-found: error
           retention-days: 30
 
@@ -127,27 +127,27 @@ jobs:
         run: uv sync --group build
 
       - name: Build macOS .app bundle
-        run: uv run pyinstaller --noconfirm --clean SmartRenamer_macos.spec
+        run: uv run pyinstaller --noconfirm --clean VisualSequenceRenamer_macos.spec
 
-      - name: Create SmartRenamer-macos.zip
+      - name: Create VisualSequenceRenamer-macos.zip
         run: |
-          test -d dist/SmartRenamer.app
-          ditto -c -k --keepParent dist/SmartRenamer.app dist/SmartRenamer-macos.zip
+          test -d dist/VisualSequenceRenamer.app
+          ditto -c -k --keepParent dist/VisualSequenceRenamer.app dist/VisualSequenceRenamer-macos.zip
 
       - name: Upload for release (tag)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
           name: release-asset-macos
-          path: dist/SmartRenamer-macos.zip
+          path: dist/VisualSequenceRenamer-macos.zip
           if-no-files-found: error
 
       - name: Upload macOS build (branch)
         if: startsWith(github.ref, 'refs/heads/build/')
         uses: actions/upload-artifact@v4
         with:
-          name: smartrenamer-macos-${{ github.sha }}
-          path: dist/SmartRenamer-macos.zip
+          name: visualsequencerenamer-macos-${{ github.sha }}
+          path: dist/VisualSequenceRenamer-macos.zip
           if-no-files-found: error
           retention-days: 30
 
@@ -173,8 +173,8 @@ jobs:
         uses: softprops/action-gh-release@v2.6.1
         with:
           files: |
-            release-assets/SmartRenamer.zip
-            release-assets/SmartRenamer-macos.zip
+            release-assets/VisualSequenceRenamer.zip
+            release-assets/VisualSequenceRenamer-macos.zip
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -43,12 +43,12 @@ const githubUrl = repoBase ?? "https://github.com/";
 
 const downloadUrl =
   import.meta.env.PUBLIC_DOWNLOAD_URL?.trim() ||
-  (repoBase ? `${repoBase}/releases/latest/download/SmartRenamer.zip` : "") ||
+  (repoBase ? `${repoBase}/releases/latest/download/VisualSequenceRenamer.zip` : "") ||
   "#";
 
 const downloadMacUrl =
   import.meta.env.PUBLIC_MACOS_DOWNLOAD_URL?.trim() ||
-  (repoBase ? `${repoBase}/releases/latest/download/SmartRenamer-macos.zip` : "") ||
+  (repoBase ? `${repoBase}/releases/latest/download/VisualSequenceRenamer-macos.zip` : "") ||
   (repoBase ? `${repoBase}/releases/latest` : "#");
 
 /** Markdown 風の **太字** を <strong> に変換（LP 用・静的コンテンツのみ）。 */
@@ -231,14 +231,14 @@ function publicAsset(relativePath: string): string {
           </div>
           <p class="mt-4 text-sm text-ink-500 dark:text-ink-400">
             最新リリースの
-            <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800">SmartRenamer.zip</code>
+            <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800">VisualSequenceRenamer.zip</code>
             （Windows・展開後 <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800"
-              >SmartRenamer.exe</code
+              >VisualSequenceRenamer.exe</code
             >）と
             <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800"
-              >SmartRenamer-macos.zip</code
+              >VisualSequenceRenamer-macos.zip</code
             >（macOS・展開後 <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800"
-              >SmartRenamer.app</code
+              >VisualSequenceRenamer.app</code
             >）へリンクします。未リリースやアセット名不一致の場合は 404 になることがあります。
           </p>
         </div>

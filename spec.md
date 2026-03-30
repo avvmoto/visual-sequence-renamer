@@ -19,7 +19,7 @@
 | 型検査 | Mypy |
 | テスト | Pytest（`pytest-qt` を dev 依存に含む） |
 | パス | `pathlib.Path` を用いる |
-| Windows 配布用ビルド | PyInstaller（`SmartRenamer.spec`・CI は本番依存 + `uv run --with pyinstaller`） |
+| Windows 配布用ビルド | PyInstaller（`VisualSequenceRenamer.spec`・CI は本番依存 + `uv run --with pyinstaller`） |
 
 ## 3. ディレクトリ構造（src layout）
 
@@ -119,14 +119,14 @@
     - `main` への **push** → **テストのみ**（ビルド・リリースは走らない）。  
     - **`v*` で始まるタグ**の **push** → **テスト → ビルド＆リリース**（テスト失敗時はビルドしない）。  
   - **ジョブ `test`:** `ubuntu-latest`、`uv`（キャッシュ有効）、`uv sync --group dev`、`pytest`。GUI 用に `QT_QPA_PLATFORM=offscreen` を設定。  
-  - **ジョブ `build-windows`:** `windows-latest`、上記テスト成功かつタグ `v*` または `build/**` ブランチ。`uv sync --group build` のうえ **`SmartRenamer.spec`** で **PyInstaller**（`onefile`・`--windowed` 相当）。成果物 **`dist/SmartRenamer.exe`** を **`dist/SmartRenamer.zip`** に固める。タグ時は **`release-asset-windows`** として Artifact に載せ、`build/**` 時は **`smartrenamer-windows-<sha>`** で Artifact のみ。  
-  - **ジョブ `build-macos`:** `macos-latest`、条件は Windows と同じ。`uv sync --group build` のうえ **`SmartRenamer_macos.spec`** で **PyInstaller**（`onefile` + **`BUNDLE`** で **`SmartRenamer.app`**）。**`ditto`** で **`SmartRenamer-macos.zip`** を作成（展開後に `.app` をそのまま利用）。タグ時は **`release-asset-macos`**、ブランチ時は **`smartrenamer-macos-<sha>`**。  
-  - **ジョブ `release`:** タグ `v*` のみ、`build-windows` / `build-macos` の両方成功後に実行。**`softprops/action-gh-release`** で **1 つの Release** に **`SmartRenamer.zip`** と **`SmartRenamer-macos.zip`** を同時添付（`generate_release_notes: true`）。いずれかの OS ビルドが失敗した場合は Release は作られない。  
+  - **ジョブ `build-windows`:** `windows-latest`、上記テスト成功かつタグ `v*` または `build/**` ブランチ。`uv sync --group build` のうえ **`VisualSequenceRenamer.spec`** で **PyInstaller**（`onefile`・`--windowed` 相当）。成果物 **`dist/VisualSequenceRenamer.exe`** を **`dist/VisualSequenceRenamer.zip`** に固める。タグ時は **`release-asset-windows`** として Artifact に載せ、`build/**` 時は **`visualsequencerenamer-windows-<sha>`** で Artifact のみ。  
+  - **ジョブ `build-macos`:** `macos-latest`、条件は Windows と同じ。`uv sync --group build` のうえ **`VisualSequenceRenamer_macos.spec`** で **PyInstaller**（`onefile` + **`BUNDLE`** で **`VisualSequenceRenamer.app`**）。**`ditto`** で **`VisualSequenceRenamer-macos.zip`** を作成（展開後に `.app` をそのまま利用）。タグ時は **`release-asset-macos`**、ブランチ時は **`visualsequencerenamer-macos-<sha>`**。  
+  - **ジョブ `release`:** タグ `v*` のみ、`build-windows` / `build-macos` の両方成功後に実行。**`softprops/action-gh-release`** で **1 つの Release** に **`VisualSequenceRenamer.zip`** と **`VisualSequenceRenamer-macos.zip`** を同時添付（`generate_release_notes: true`）。いずれかの OS ビルドが失敗した場合は Release は作られない。  
   - **コード署名:** macOS バンドルは **未署名**（Developer ID / 公証なし）。他環境で初回起動時は Gatekeeper の警告が出る場合があり、ユーザー側で「開く」許可が必要になることがある。
 - **GitHub Pages**（`.github/workflows/pages.yml`）  
   - **トリガー:** `main` への **push**。  
   - **内容:** `docs/` 内の **Astro + Tailwind** LP をビルドし、**GitHub Actions** デプロイで公開（リポジトリ Settings → Pages の Source を **GitHub Actions** に設定）。  
-  - **LP コンテンツ:** Markdown は **`docs/src/content/landing/index.md`**（Astro Content Collections の `landing` コレクション。フロントマター + 本文）。ダウンロードは `PUBLIC_DOWNLOAD_URL`（**`SmartRenamer.zip`**）および `PUBLIC_MACOS_DOWNLOAD_URL`（**`SmartRenamer-macos.zip`**）を参照。
+  - **LP コンテンツ:** Markdown は **`docs/src/content/landing/index.md`**（Astro Content Collections の `landing` コレクション。フロントマター + 本文）。ダウンロードは `PUBLIC_DOWNLOAD_URL`（**`VisualSequenceRenamer.zip`**）および `PUBLIC_MACOS_DOWNLOAD_URL`（**`VisualSequenceRenamer-macos.zip`**）を参照。
 
 ## 7. テスト
 

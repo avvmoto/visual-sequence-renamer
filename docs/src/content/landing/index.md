@@ -54,7 +54,7 @@ trust:
 
 footer:
   copyright: © Visual Sequence Renamer
-  note: 開発時は `uv run renamer` でも起動できます。配布版は Windows は ZIP 内の SmartRenamer.exe、macOS は ZIP を展開した SmartRenamer.app。初回起動時は OS の警告が出ることがあります（上記の手順を参照）。
+  note: 開発時は `uv run renamer` でも起動できます。配布版は Windows は ZIP 内の VisualSequenceRenamer.exe、macOS は ZIP を展開した VisualSequenceRenamer.app。初回起動時は OS の警告が出ることがあります（上記の手順を参照）。
 ---
 
 ## このアプリについて

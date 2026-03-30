@@ -40,7 +40,7 @@ build = [
 target-version = "py310"
 line-length = 100
 src = ["src", "tests"]
-extend-exclude = ["SmartRenamer.spec", "SmartRenamer_macos.spec"]
+extend-exclude = ["VisualSequenceRenamer.spec", "VisualSequenceRenamer_macos.spec"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]

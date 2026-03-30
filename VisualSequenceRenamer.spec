@@ -119,7 +119,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name="SmartRenamer",
+    name="VisualSequenceRenamer",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

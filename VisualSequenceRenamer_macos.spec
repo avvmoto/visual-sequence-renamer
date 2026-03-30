@@ -117,7 +117,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name="SmartRenamer",
+    name="VisualSequenceRenamer",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -135,11 +135,11 @@ exe = EXE(
 
 app = BUNDLE(
     exe,
-    name="SmartRenamer.app",
+    name="VisualSequenceRenamer.app",
     icon=_icon_mac,
-    bundle_identifier="io.github.visualsequencerenamer.smartrenamer",
+    bundle_identifier="io.github.visualsequencerenamer.app",
     info_plist={
-        "CFBundleName": "SmartRenamer",
+        "CFBundleName": "VisualSequenceRenamer",
         "CFBundleDisplayName": "Visual Sequence Renamer",
         "NSHighResolutionCapable": True,
         "CFBundleShortVersionString": "0.1.0",

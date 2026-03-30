@@ -4,7 +4,7 @@
 
 ドラッグ＆ドロップでファイルを並べ替え、指定した順で `001_元の名前.ext` 形式に連番リネームするデスクトップアプリです。macOS / Windows 向け（PySide6 / Qt6）。
 
-**名前について:** 画面上で並べた順に連番でリネームする体験を表す **ならべて連番リネーマー**、英語名 **Visual Sequence Renamer** です。Python パッケージ名およびコマンドは短い **`renamer`** のままです（`pip install renamer` / `uv run renamer` など）。Windows 向け PyInstaller 成果物は **`SmartRenamer.exe`**（単一ファイル）。GitHub Release / CI Artifact では **`SmartRenamer.zip`**（中身は exe のみ）を配布します。
+**名前について:** 画面上で並べた順に連番でリネームする体験を表す **ならべて連番リネーマー**、英語名 **Visual Sequence Renamer** です。Python パッケージ名およびコマンドは短い **`renamer`** のままです（`pip install renamer` / `uv run renamer` など）。Windows 向け PyInstaller 成果物は **`VisualSequenceRenamer.exe`**（単一ファイル）。GitHub Release / CI Artifact では **`VisualSequenceRenamer.zip`**（中身は exe のみ）を配布します。
 
 ## 機能
 
@@ -57,7 +57,7 @@ uv sync --group dev --group build
 | 整形 | `uv run ruff format .` |
 | 型チェック | `uv run mypy` |
 
-Windows 向けビルドはリポジトリ直下の **`SmartRenamer.spec`**（`onefile`・未使用 Qt モジュール除外）と [.github/workflows/build.yml](.github/workflows/build.yml) を参照してください。ローカル例: `uv sync --group build` のうえ `uv run pyinstaller --noconfirm SmartRenamer.spec` → `dist/SmartRenamer.exe`。
+Windows 向けビルドはリポジトリ直下の **`VisualSequenceRenamer.spec`**（`onefile`・未使用 Qt モジュール除外）と [.github/workflows/build.yml](.github/workflows/build.yml) を参照してください。ローカル例: `uv sync --group build` のうえ `uv run pyinstaller --noconfirm VisualSequenceRenamer.spec` → `dist/VisualSequenceRenamer.exe`。
 
 ## アイコンの差し替え
 
@@ -101,4 +101,4 @@ icos[0].save('src/app/resources/app_icon.ico', format='ICO', append_images=icos[
 
 ## English summary
 
-**Visual Sequence Renamer** (Japanese: **ならべて連番リネーマー**) is a **free** cross-platform (macOS / Windows) desktop app built with PySide6. Drop files, reorder them, then batch-rename to `001_originalname.ext` in the same folder. **Open source** under the **MIT License** — use freely for any purpose. The installable Python package / CLI command remains **`renamer`** for brevity. Windows releases ship **`SmartRenamer.zip`** containing a single **`SmartRenamer.exe`**.
+**Visual Sequence Renamer** (Japanese: **ならべて連番リネーマー**) is a **free** cross-platform (macOS / Windows) desktop app built with PySide6. Drop files, reorder them, then batch-rename to `001_originalname.ext` in the same folder. **Open source** under the **MIT License** — use freely for any purpose. The installable Python package / CLI command remains **`renamer`** for brevity. Windows releases ship **`VisualSequenceRenamer.zip`** containing a single **`VisualSequenceRenamer.exe`**.
