@@ -119,12 +119,14 @@
     - `main` への **push** → **テストのみ**（ビルド・リリースは走らない）。  
     - **`v*` で始まるタグ**の **push** → **テスト → ビルド＆リリース**（テスト失敗時はビルドしない）。  
   - **ジョブ `test`:** `ubuntu-latest`、`uv`（キャッシュ有効）、`uv sync --group dev`、`pytest`。GUI 用に `QT_QPA_PLATFORM=offscreen` を設定。  
-  - **ジョブ `build-and-release`:** `windows-latest`、上記テスト成功かつタグ `v*` または `build/**` ブランチ。`uv sync`（**本番依存のみ**・dev ツールは入れない）のうえ **`SmartRenamer.spec`** で **PyInstaller**（`onefile`・`--windowed` 相当、未使用 Qt モジュールは spec の `excludes` で除外）。成果物は **`dist/SmartRenamer.exe` のみ**（展開用 onedir は作らない）。  
-  - **ZIP:** `SmartRenamer.exe` を **`dist/SmartRenamer.zip`** に固め、**Artifact / GitHub Release のアセットはこの zip のみ**（`generate_release_notes: true`）。
+  - **ジョブ `build-windows`:** `windows-latest`、上記テスト成功かつタグ `v*` または `build/**` ブランチ。`uv sync --group build` のうえ **`SmartRenamer.spec`** で **PyInstaller**（`onefile`・`--windowed` 相当）。成果物 **`dist/SmartRenamer.exe`** を **`dist/SmartRenamer.zip`** に固める。タグ時は **`release-asset-windows`** として Artifact に載せ、`build/**` 時は **`smartrenamer-windows-<sha>`** で Artifact のみ。  
+  - **ジョブ `build-macos`:** `macos-latest`、条件は Windows と同じ。`uv sync --group build` のうえ **`SmartRenamer_macos.spec`** で **PyInstaller**（`onefile` + **`BUNDLE`** で **`SmartRenamer.app`**）。**`ditto`** で **`SmartRenamer-macos.zip`** を作成（展開後に `.app` をそのまま利用）。タグ時は **`release-asset-macos`**、ブランチ時は **`smartrenamer-macos-<sha>`**。  
+  - **ジョブ `release`:** タグ `v*` のみ、`build-windows` / `build-macos` の両方成功後に実行。**`softprops/action-gh-release`** で **1 つの Release** に **`SmartRenamer.zip`** と **`SmartRenamer-macos.zip`** を同時添付（`generate_release_notes: true`）。いずれかの OS ビルドが失敗した場合は Release は作られない。  
+  - **コード署名:** macOS バンドルは **未署名**（Developer ID / 公証なし）。他環境で初回起動時は Gatekeeper の警告が出る場合があり、ユーザー側で「開く」許可が必要になることがある。
 - **GitHub Pages**（`.github/workflows/pages.yml`）  
   - **トリガー:** `main` への **push**。  
   - **内容:** `docs/` 内の **Astro + Tailwind** LP をビルドし、**GitHub Actions** デプロイで公開（リポジトリ Settings → Pages の Source を **GitHub Actions** に設定）。  
-  - **LP コンテンツ:** Markdown は **`docs/src/content/landing/index.md`**（Astro Content Collections の `landing` コレクション。フロントマター + 本文）。ダウンロードボタンはビルド時の `PUBLIC_DOWNLOAD_URL`（既定で最新リリースの **`SmartRenamer.zip`**）を参照。
+  - **LP コンテンツ:** Markdown は **`docs/src/content/landing/index.md`**（Astro Content Collections の `landing` コレクション。フロントマター + 本文）。ダウンロードは `PUBLIC_DOWNLOAD_URL`（**`SmartRenamer.zip`**）および `PUBLIC_MACOS_DOWNLOAD_URL`（**`SmartRenamer-macos.zip`**）を参照。
 
 ## 7. テスト
 

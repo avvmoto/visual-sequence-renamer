@@ -1,6 +1,6 @@
 # main プッシュ: テストのみ（Linux）。
-# build/** プッシュ: テスト成功後に Windows でビルドし Artifact に .exe を保存。
-# v* タグプッシュ: テスト成功後に Windows でビルドし GitHub Release へ単一 .exe を公開。
+# build/** プッシュ: テスト成功後に Windows / macOS をビルドし Artifact に ZIP を保存。
+# v* タグプッシュ: テスト成功後に両 OS をビルドし、1 つの GitHub Release に両 ZIP を添付。
 name: CI / CD
 
 # Node.js 20 ベースの composite action 警告回避（2026 年以降の runner 既定は Node 24）。
@@ -62,8 +62,8 @@ jobs:
       - name: Run tests
         run: uv run pytest
 
-  build-and-release:
-    name: Build and Release (Windows)
+  build-windows:
+    name: Build (Windows)
     needs: test
     runs-on: windows-latest
     if: >
@@ -78,7 +78,6 @@ jobs:
         with:
           enable-cache: true
 
-      # 本番依存 + PyInstaller のみ（pytest / ruff / mypy は venv に入れない）
       - name: Sync dependencies (runtime + PyInstaller)
         run: uv sync --group build
 
@@ -91,20 +90,91 @@ jobs:
           if (-not (Test-Path dist/SmartRenamer.exe)) { throw "dist/SmartRenamer.exe not found" }
           Compress-Archive -LiteralPath dist/SmartRenamer.exe -DestinationPath dist/SmartRenamer.zip -Force
 
-      - name: Create GitHub Release and upload SmartRenamer.zip
+      - name: Upload for release (tag)
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2.6.1
+        uses: actions/upload-artifact@v4
         with:
-          files: dist/SmartRenamer.zip
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: release-asset-windows
+          path: dist/SmartRenamer.zip
+          if-no-files-found: error
 
-      - name: Upload Windows build (branch build)
+      - name: Upload Windows build (branch)
         if: startsWith(github.ref, 'refs/heads/build/')
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: smartrenamer-windows-${{ github.sha }}
           path: dist/SmartRenamer.zip
           if-no-files-found: error
           retention-days: 30
+
+  build-macos:
+    name: Build (macOS)
+    needs: test
+    runs-on: macos-latest
+    if: >
+      startsWith(github.ref, 'refs/tags/v') ||
+      startsWith(github.ref, 'refs/heads/build/')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Sync dependencies (runtime + PyInstaller)
+        run: uv sync --group build
+
+      - name: Build macOS .app bundle
+        run: uv run pyinstaller --noconfirm --clean SmartRenamer_macos.spec
+
+      - name: Create SmartRenamer-macos.zip
+        run: |
+          test -d dist/SmartRenamer.app
+          ditto -c -k --keepParent dist/SmartRenamer.app dist/SmartRenamer-macos.zip
+
+      - name: Upload for release (tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-asset-macos
+          path: dist/SmartRenamer-macos.zip
+          if-no-files-found: error
+
+      - name: Upload macOS build (branch)
+        if: startsWith(github.ref, 'refs/heads/build/')
+        uses: actions/upload-artifact@v4
+        with:
+          name: smartrenamer-macos-${{ github.sha }}
+          path: dist/SmartRenamer-macos.zip
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: Publish GitHub Release
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download Windows asset
+        uses: actions/download-artifact@v4
+        with:
+          name: release-asset-windows
+          path: release-assets
+
+      - name: Download macOS asset
+        uses: actions/download-artifact@v4
+        with:
+          name: release-asset-macos
+          path: release-assets
+
+      - name: Create GitHub Release and upload assets
+        uses: softprops/action-gh-release@v2.6.1
+        with:
+          files: |
+            release-assets/SmartRenamer.zip
+            release-assets/SmartRenamer-macos.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

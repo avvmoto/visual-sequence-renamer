@@ -8,6 +8,7 @@ const landing = defineCollection({
       titleEn: z.string(),
       subtitle: z.string(),
       downloadLabel: z.string(),
+      downloadMacLabel: z.string(),
       badge: z.string(),
     }),
     features: z.array(

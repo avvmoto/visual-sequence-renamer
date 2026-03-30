@@ -3,6 +3,7 @@
 
 interface ImportMetaEnv {
   readonly PUBLIC_DOWNLOAD_URL?: string;
+  readonly PUBLIC_MACOS_DOWNLOAD_URL?: string;
   readonly PUBLIC_GITHUB_URL?: string;
   readonly PUBLIC_SITE_URL?: string;
 }

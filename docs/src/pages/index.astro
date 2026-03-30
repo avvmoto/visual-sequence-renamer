@@ -10,6 +10,7 @@ const { Content } = await page.render();
 const fm = page.data;
 
 const downloadUrl = import.meta.env.PUBLIC_DOWNLOAD_URL?.trim() || "#";
+const downloadMacUrl = import.meta.env.PUBLIC_MACOS_DOWNLOAD_URL?.trim() || "";
 const githubUrl = import.meta.env.PUBLIC_GITHUB_URL?.trim() || "https://github.com/";
 const base = import.meta.env.BASE_URL;
 ---
@@ -126,7 +127,7 @@ const base = import.meta.env.BASE_URL;
           >
             {fm.hero.subtitle}
           </p>
-          <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
             <a
               href={downloadUrl}
               class="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-8 py-4 text-base font-semibold text-white shadow-lg shadow-accent/30 transition hover:bg-accent-dim focus:outline-none focus:ring-2 focus:ring-accent-glow focus:ring-offset-2 dark:shadow-soft-dark dark:ring-offset-ink-950"
@@ -149,6 +150,32 @@ const base = import.meta.env.BASE_URL;
               </svg>
               {fm.hero.downloadLabel}
             </a>
+            {
+              downloadMacUrl && (
+                <a
+                  href={downloadMacUrl}
+                  class="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-accent/40 bg-white px-8 py-4 text-base font-semibold text-accent transition hover:bg-accent/5 focus:outline-none focus:ring-2 focus:ring-accent-glow focus:ring-offset-2 dark:bg-ink-900 dark:text-accent-glow dark:hover:bg-ink-800 dark:ring-offset-ink-950"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg
+                    class="h-5 w-5 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5m-5-9v14"
+                    />
+                  </svg>
+                  {fm.hero.downloadMacLabel}
+                </a>
+              )
+            }
             <a
               href={githubUrl}
               class="inline-flex items-center justify-center rounded-xl border border-ink-300 bg-white px-6 py-4 text-base font-medium text-ink-800 transition hover:bg-ink-50 dark:border-ink-600 dark:bg-ink-900 dark:text-ink-100 dark:hover:bg-ink-800 sm:hidden"
@@ -159,11 +186,16 @@ const base = import.meta.env.BASE_URL;
             </a>
           </div>
           <p class="mt-4 text-sm text-ink-500 dark:text-ink-400">
-            リリースのアセット <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800"
-              >SmartRenamer.zip</code
-            >（展開して <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800"
+            最新リリースの
+            <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800">SmartRenamer.zip</code>
+            （Windows・展開後 <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800"
               >SmartRenamer.exe</code
-            >）の最新版へリンクします（未リリースの場合は 404 になることがあります）。
+            >）と
+            <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800"
+              >SmartRenamer-macos.zip</code
+            >（macOS・展開後 <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800"
+              >SmartRenamer.app</code
+            >）へリンクします。未リリースやアセット名不一致の場合は 404 になることがあります。
           </p>
         </div>
       </section>

@@ -42,6 +42,7 @@ jobs:
           # ユーザー/組織の <name>.github.io リポジトリでルート公開する場合は空にし、astro.config の base を調整してください。
           PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
           PUBLIC_DOWNLOAD_URL: https://github.com/${{ github.repository }}/releases/latest/download/SmartRenamer.zip
+          PUBLIC_MACOS_DOWNLOAD_URL: https://github.com/${{ github.repository }}/releases/latest/download/SmartRenamer-macos.zip
           PUBLIC_GITHUB_URL: https://github.com/${{ github.repository }}
         run: npm run build
 

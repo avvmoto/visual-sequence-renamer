@@ -4,6 +4,7 @@ hero:
   titleEn: Visual Sequence
   subtitle: 並べた順のまま、同一フォルダで一括リネーム。
   downloadLabel: Windows 版をダウンロード（ZIP・最新リリース）
+  downloadMacLabel: macOS 版をダウンロード（.app ZIP・最新リリース）
   badge: 無料 · オープンソース（MIT）
 
 features:
@@ -27,7 +28,7 @@ steps:
 
 footer:
   copyright: © Visual Sequence Renamer
-  note: macOS は Python 環境から実行。Windows はリリースの ZIP（中身は SmartRenamer.exe）を利用できます。
+  note: 開発時は `uv run renamer` でも起動可能。配布版は Windows は ZIP 内の SmartRenamer.exe、macOS は ZIP を展開した SmartRenamer.app（未署名のため初回は「開く」が必要な場合あり）。
 ---
 
 ## このアプリについて
