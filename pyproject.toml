@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "renamer"
 version = "0.1.0"
-description = "Smart File Renamer — 並べ替えと連番リネームのデスクトップアプリ"
+description = "ならべて連番リネーマー (Visual Sequence Renamer) — 並べ替えと連番リネームのデスクトップアプリ（PySide6）"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]

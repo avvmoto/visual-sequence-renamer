@@ -1,1 +1,1 @@
-"""Smart File Renamer アプリケーションパッケージ。"""
+"""ならべて連番リネーマー（Visual Sequence Renamer）アプリケーションパッケージ。"""

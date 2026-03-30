@@ -1,6 +1,10 @@
-# renamer (Smart File Renamer)
+# ならべて連番リネーマー（Visual Sequence Renamer）
 
-ドラッグ＆ドロップでファイルを並べ替え、指定した順で `001_元の名前.ext` 形式に連番リネームするデスクトップアプリです。macOS / Windows 向け（PySide6）。
+**無料のフリーソフト**です。ソースコードは公開された **オープンソース（MIT License）** であり、利用・改変・再配布はライセンスの範囲内で自由です。
+
+ドラッグ＆ドロップでファイルを並べ替え、指定した順で `001_元の名前.ext` 形式に連番リネームするデスクトップアプリです。macOS / Windows 向け（PySide6 / Qt6）。
+
+**名前について:** 画面上で並べた順に連番でリネームする体験を表す **ならべて連番リネーマー**、英語名 **Visual Sequence Renamer** です。Python パッケージ名およびコマンドは短い **`renamer`** のままです（`pip install renamer` / `uv run renamer` など）。Windows の配布用 EXE も **`renamer.exe`** のファイル名です。
 
 ## 機能
 
@@ -80,8 +84,8 @@ icos[0].save('src/app/resources/app_icon.ico', format='ICO', append_images=icos[
 
 [MIT License](LICENSE)
 
-再利用・改変・商用利用を含め、ソフトウェアおよびドキュメントを自由に利用できます。利用は自己責任で、作者は保証しません。
+再利用・改変・商用利用を含め、ソフトウェアおよびドキュメントを自由に利用できます。利用は自己責任で、作者は保証しません。不具合報告や改善のプルリクエストは歓迎します（保証はありません）。
 
 ## English summary
 
-**renamer** is a cross-platform (macOS / Windows) desktop app built with PySide6. Drop files, reorder them, then batch-rename to `001_originalname.ext` into a timestamped or custom output folder. Licensed under the **MIT License** — use freely for any purpose.
+**Visual Sequence Renamer** (Japanese: **ならべて連番リネーマー**) is a **free** cross-platform (macOS / Windows) desktop app built with PySide6. Drop files, reorder them, then batch-rename to `001_originalname.ext` in the same folder. **Open source** under the **MIT License** — use freely for any purpose. The installable Python package / CLI command remains **`renamer`** for brevity; the Windows build is **`renamer.exe`**.

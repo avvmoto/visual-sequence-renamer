@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
     def __init__(self) -> None:
         """ウィンドウと子ウィジェットを構築する。"""
         super().__init__()
-        self.setWindowTitle("Smart File Renamer")
+        self.setWindowTitle("ならべて連番リネーマー — Visual Sequence Renamer")
         self.resize(800, 520)
         _win_icon = build_application_icon()
         if not _win_icon.isNull():

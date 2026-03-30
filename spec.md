@@ -1,9 +1,10 @@
-# Project Specification: Smart File Renamer
+# Project Specification: ならべて連番リネーマー（Visual Sequence Renamer）
 
 本ドキュメントは **現在の実装の正** とする。コードと乖離した場合は本ファイルを更新する。
 
 ## 1. 概要
 
+**製品名（日本語）:** ならべて連番リネーマー。**英語名:** Visual Sequence Renamer。  
 同一フォルダ内のファイルを一覧し、表示順どおりに連番付きファイル名へ**その場リネーム**するデスクトップアプリケーション。macOS と Windows の両方を想定したクロスプラットフォーム対応。
 
 ## 2. 技術スタック
