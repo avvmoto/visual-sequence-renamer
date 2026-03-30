@@ -113,12 +113,13 @@
 ## 6. CI / 配布
 
 - **GitHub Actions**（`.github/workflows/build.yml`）  
-  - **トリガー:** `main` ブランチへの `push` のみ。  
-  - **ランナー:** `windows-latest`。  
-  - **uv:** `astral-sh/setup-uv`、**キャッシュ有効**。  
-  - **ビルド:** `uv sync --all-groups` のうえ **PyInstaller**（`--windowed`、`--collect-all PySide6` / `shiboken6`、エントリ `src/app/main.py`）。  
-  - **成果物:** `dist/` を **GitHub Artifacts**（`renamer-windows`、保持 30 日）にアップロード。  
-- **自動 GitHub Release へのアップロード:** 現状 **未設定**（必要なら別ワークフローで拡張）。
+  - **権限:** `permissions: contents: write`（リリース作成用）。  
+  - **トリガー:**  
+    - `main` への **push** → **テストのみ**（ビルド・リリースは走らない）。  
+    - **`v*` で始まるタグ**の **push** → **テスト → ビルド＆リリース**（テスト失敗時はビルドしない）。  
+  - **ジョブ `test`:** `ubuntu-latest`、`uv`（キャッシュ有効）、`uv sync --all-groups`、`pytest`。GUI 用に `QT_QPA_PLATFORM=offscreen` を設定。  
+  - **ジョブ `build-and-release`:** `windows-latest`、上記テスト成功かつタグ `v*` のときのみ実行。`uv`（キャッシュ有効）のうえ **PyInstaller**（`--onefile`・`--windowed`、`--collect-all PySide6` / `shiboken6`、エントリ `src/app/main.py`）。成果物は **`dist/renamer.exe` 単体**（深い `dist/renamer/` 配下にしない）。  
+  - **リリース:** `softprops/action-gh-release` で GitHub Release を作成し、**`renamer.exe` をアセット**として添付（`generate_release_notes: true`）。
 
 ## 7. テスト
 
