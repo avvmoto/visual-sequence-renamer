@@ -1,0 +1,297 @@
+---
+import { getEntry } from "astro:content";
+import FeatureIcon from "../components/FeatureIcon.astro";
+
+const page = await getEntry("landing", "index");
+if (!page) {
+  throw new Error('Missing content: use "landing/index.md"');
+}
+const { Content } = await page.render();
+const fm = page.data;
+
+const downloadUrl = import.meta.env.PUBLIC_DOWNLOAD_URL?.trim() || "#";
+const githubUrl = import.meta.env.PUBLIC_GITHUB_URL?.trim() || "https://github.com/";
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="ja" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fm.hero.titleJa} ({fm.hero.titleEn}) — Visual Sequence Renamer</title>
+    <meta
+      name="description"
+      content={fm.hero.subtitle}
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>
+      (function () {
+        var k = "vsr-theme";
+        var d = document.documentElement;
+        var s = localStorage.getItem(k);
+        if (
+          s === "dark" ||
+          (!s && window.matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          d.classList.add("dark");
+        } else {
+          d.classList.remove("dark");
+        }
+      })();
+    </script>
+  </head>
+  <body
+    class="min-h-screen bg-ink-50 text-ink-900 antialiased transition-colors duration-200 dark:bg-ink-950 dark:text-ink-100"
+  >
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-white"
+      >メインへスキップ</a
+    >
+
+    <header
+      class="sticky top-0 z-40 border-b border-ink-200/80 bg-ink-50/90 backdrop-blur-md dark:border-ink-800 dark:bg-ink-950/90"
+    >
+      <div
+        class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6"
+      >
+        <a href={base} class="group flex flex-col leading-tight">
+          <span class="text-sm font-semibold tracking-tight text-ink-900 dark:text-white">
+            {fm.hero.titleJa}
+          </span>
+          <span class="text-xs text-ink-500 dark:text-ink-400">
+            Visual Sequence Renamer
+          </span>
+        </a>
+        <div class="flex items-center gap-2">
+          <a
+            href={githubUrl}
+            class="hidden rounded-lg px-3 py-2 text-sm font-medium text-ink-600 hover:bg-ink-200/60 dark:text-ink-300 dark:hover:bg-ink-800 sm:inline-block"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub
+          </a>
+          <button
+            type="button"
+            id="theme-toggle"
+            class="flex h-10 w-10 items-center justify-center rounded-lg border border-ink-200 bg-white text-ink-700 shadow-sm hover:border-ink-300 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-200 dark:hover:border-ink-600"
+            aria-label="テーマを切り替え"
+          >
+            <span class="dark:hidden" aria-hidden="true">🌙</span>
+            <span class="hidden dark:inline" aria-hidden="true">☀️</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section
+        class="relative overflow-hidden border-b border-ink-200/80 bg-gradient-to-b from-white to-ink-100/80 dark:border-ink-800 dark:from-ink-950 dark:to-ink-900"
+      >
+        <div
+          class="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-accent/20 blur-3xl dark:bg-accent/10"
+          aria-hidden="true"
+        >
+        </div>
+        <div
+          class="pointer-events-none absolute -bottom-32 -left-24 h-80 w-80 rounded-full bg-purple-500/15 blur-3xl dark:bg-purple-500/10"
+          aria-hidden="true"
+        >
+        </div>
+        <div class="relative mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-24">
+          <p
+            class="mb-4 inline-flex rounded-full border border-ink-200 bg-white/80 px-3 py-1 text-xs font-medium text-ink-600 shadow-sm dark:border-ink-700 dark:bg-ink-900/80 dark:text-ink-300"
+          >
+            {fm.hero.badge}
+          </p>
+          <h1
+            class="text-balance text-4xl font-bold tracking-tight text-ink-950 dark:text-white sm:text-5xl lg:text-6xl"
+          >
+            <span class="block">{fm.hero.titleJa}</span>
+            <span
+              class="mt-1 block bg-gradient-to-r from-accent to-purple-500 bg-clip-text text-3xl text-transparent sm:text-4xl lg:text-5xl"
+            >
+              {fm.hero.titleEn}
+            </span>
+          </h1>
+          <p
+            class="mt-6 max-w-2xl text-lg leading-relaxed text-ink-600 dark:text-ink-300"
+          >
+            {fm.hero.subtitle}
+          </p>
+          <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <a
+              href={downloadUrl}
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-8 py-4 text-base font-semibold text-white shadow-lg shadow-accent/30 transition hover:bg-accent-dim focus:outline-none focus:ring-2 focus:ring-accent-glow focus:ring-offset-2 dark:shadow-soft-dark dark:ring-offset-ink-950"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <svg
+                class="h-5 w-5 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5m-5-9v14"
+                />
+              </svg>
+              {fm.hero.downloadLabel}
+            </a>
+            <a
+              href={githubUrl}
+              class="inline-flex items-center justify-center rounded-xl border border-ink-300 bg-white px-6 py-4 text-base font-medium text-ink-800 transition hover:bg-ink-50 dark:border-ink-600 dark:bg-ink-900 dark:text-ink-100 dark:hover:bg-ink-800 sm:hidden"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              ソースを見る
+            </a>
+          </div>
+          <p class="mt-4 text-sm text-ink-500 dark:text-ink-400">
+            リリースのアセット <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800"
+              >SmartRenamer.zip</code
+            >（展開して <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800"
+              >SmartRenamer.exe</code
+            >）の最新版へリンクします（未リリースの場合は 404 になることがあります）。
+          </p>
+        </div>
+      </section>
+
+      <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20" aria-labelledby="features-heading">
+        <h2
+          id="features-heading"
+          class="text-center text-2xl font-bold text-ink-950 dark:text-white sm:text-3xl"
+        >
+          主な機能
+        </h2>
+        <p class="mx-auto mt-3 max-w-2xl text-center text-ink-600 dark:text-ink-400">
+          仕様に基づき、実際の挙動で重視しているポイントをまとめました。
+        </p>
+        <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            fm.features.map((f) => (
+              <li
+                class="group flex flex-col rounded-2xl border border-ink-200 bg-white p-6 shadow-soft transition hover:border-accent/40 hover:shadow-lg dark:border-ink-800 dark:bg-ink-900/60 dark:shadow-none dark:hover:border-accent/30"
+              >
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent dark:bg-accent/20 dark:text-accent-glow">
+                  <FeatureIcon id={f.id} class="h-7 w-7" />
+                </div>
+                <h3 class="text-lg font-semibold text-ink-950 dark:text-white">
+                  {f.title}
+                </h3>
+                <p class="mt-2 flex-1 text-sm leading-relaxed text-ink-600 dark:text-ink-400">
+                  {f.description}
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section
+        class="border-y border-ink-200/80 bg-ink-100/50 py-16 dark:border-ink-800 dark:bg-ink-900/40 sm:py-20"
+        aria-labelledby="how-heading"
+      >
+        <div class="mx-auto max-w-5xl px-4 sm:px-6">
+          <h2
+            id="how-heading"
+            class="text-center text-2xl font-bold text-ink-950 dark:text-white sm:text-3xl"
+          >
+            使い方（3 ステップ）
+          </h2>
+          <p class="mx-auto mt-3 max-w-2xl text-center text-ink-600 dark:text-ink-400">
+            スクリーンショットはプレースホルダです。あとから画像に差し替えられます。
+          </p>
+          <ol class="mt-12 space-y-12">
+            {
+              fm.steps.map((step, i) => (
+                <li class="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-10">
+                  <div
+                    class={`flex flex-1 flex-col ${i % 2 === 1 ? "lg:order-2" : ""}`}
+                  >
+                    <span class="text-sm font-semibold uppercase tracking-wider text-accent">
+                      Step {i + 1}
+                    </span>
+                    <h3 class="mt-1 text-xl font-bold text-ink-950 dark:text-white">
+                      {step.title}
+                    </h3>
+                    <p class="mt-2 text-ink-600 dark:text-ink-400">{step.caption}</p>
+                  </div>
+                  <div
+                    class={`flex flex-1 justify-center ${i % 2 === 1 ? "lg:order-1" : ""}`}
+                  >
+                    <div
+                      class="flex aspect-video w-full max-w-md items-center justify-center rounded-2xl border-2 border-dashed border-ink-300 bg-gradient-to-br from-ink-100 to-ink-200 text-ink-500 shadow-inner dark:border-ink-600 dark:from-ink-800 dark:to-ink-900 dark:text-ink-500"
+                      role="img"
+                      aria-label={`ステップ ${i + 1} のスクリーンショット（プレースホルダ）`}
+                    >
+                      <span class="px-4 text-center text-sm font-medium">
+                        スクリーンショット
+                        <br />
+                        <span class="text-xs opacity-80">準備中 · 16:9</span>
+                      </span>
+                    </div>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+      </section>
+
+      <section class="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
+        <div
+          class="prose prose-lg max-w-none text-ink-700 dark:prose-invert dark:text-ink-300 prose-headings:font-bold prose-headings:text-ink-950 dark:prose-headings:text-white prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-strong:text-ink-950 dark:prose-strong:text-white"
+        >
+          <Content />
+        </div>
+        <p class="mt-8">
+          <a
+            href={githubUrl}
+            class="inline-flex items-center gap-2 font-medium text-accent hover:text-accent-dim"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub でリポジトリを開く
+            <span aria-hidden="true">→</span>
+          </a>
+        </p>
+      </section>
+    </main>
+
+    <footer
+      class="border-t border-ink-200 bg-white py-10 dark:border-ink-800 dark:bg-ink-950"
+    >
+      <div
+        class="mx-auto flex max-w-5xl flex-col gap-4 px-4 text-center text-sm text-ink-500 dark:text-ink-400 sm:px-6 sm:text-left"
+      >
+        <p class="font-medium text-ink-700 dark:text-ink-300">{fm.footer.copyright}</p>
+        <p>{fm.footer.note}</p>
+      </div>
+    </footer>
+
+    <script is:inline>
+      (function () {
+        var btn = document.getElementById("theme-toggle");
+        var k = "vsr-theme";
+        if (!btn) return;
+        btn.addEventListener("click", function () {
+          var d = document.documentElement;
+          var dark = d.classList.toggle("dark");
+          localStorage.setItem(k, dark ? "dark" : "light");
+        });
+      })();
+    </script>
+  </body>
+</html>

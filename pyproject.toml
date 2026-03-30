@@ -30,6 +30,9 @@ dev = [
     "mypy>=1.13.0",
     "pytest>=8.0.0",
     "pytest-qt>=4.4.0",
+]
+# Windows 用 PyInstaller バンドル専用（テスト・Lint ツールと分離）
+build = [
     "pyinstaller>=6.0.0",
 ]
 
@@ -37,6 +40,7 @@ dev = [
 target-version = "py310"
 line-length = 100
 src = ["src", "tests"]
+extend-exclude = ["SmartRenamer.spec"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]

@@ -38,8 +38,8 @@ jobs:
         with:
           enable-cache: true
 
-      - name: Sync dependencies
-        run: uv sync --all-groups
+      - name: Sync dependencies (dev / test)
+        run: uv sync --group dev
 
       # PySide6 / pytest-qt が QtGui 読み込み時に libEGL 等を要求する（ヘッドレスでも共有ライブラリが必要）
       - name: Install Qt EGL / XCB dependencies (headless)
@@ -78,36 +78,33 @@ jobs:
         with:
           enable-cache: true
 
-      - name: Sync dependencies
-        run: uv sync --all-groups
+      # 本番依存 + PyInstaller のみ（pytest / ruff / mypy は venv に入れない）
+      - name: Sync dependencies (runtime + PyInstaller)
+        run: uv sync --group build
 
       - name: Build single-file executable
-        run: >
-          uv run pyinstaller
-          --noconfirm
-          --clean
-          --name renamer
-          --windowed
-          --onefile
-          --paths src
-          --collect-all PySide6
-          --collect-all shiboken6
-          src/app/main.py
+        run: uv run pyinstaller --noconfirm --clean SmartRenamer.spec
 
-      - name: Create GitHub Release and upload renamer.exe
+      - name: Create SmartRenamer.zip
+        shell: pwsh
+        run: |
+          if (-not (Test-Path dist/SmartRenamer.exe)) { throw "dist/SmartRenamer.exe not found" }
+          Compress-Archive -LiteralPath dist/SmartRenamer.exe -DestinationPath dist/SmartRenamer.zip -Force
+
+      - name: Create GitHub Release and upload SmartRenamer.zip
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2.6.1
         with:
-          files: dist/renamer.exe
+          files: dist/SmartRenamer.zip
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Windows executable (branch build)
+      - name: Upload Windows build (branch build)
         if: startsWith(github.ref, 'refs/heads/build/')
         uses: actions/upload-artifact@v7
         with:
-          name: renamer-windows-${{ github.sha }}
-          path: dist/renamer.exe
+          name: smartrenamer-windows-${{ github.sha }}
+          path: dist/SmartRenamer.zip
           if-no-files-found: error
           retention-days: 30

@@ -4,7 +4,7 @@
 
 ドラッグ＆ドロップでファイルを並べ替え、指定した順で `001_元の名前.ext` 形式に連番リネームするデスクトップアプリです。macOS / Windows 向け（PySide6 / Qt6）。
 
-**名前について:** 画面上で並べた順に連番でリネームする体験を表す **ならべて連番リネーマー**、英語名 **Visual Sequence Renamer** です。Python パッケージ名およびコマンドは短い **`renamer`** のままです（`pip install renamer` / `uv run renamer` など）。Windows の配布用 EXE も **`renamer.exe`** のファイル名です。
+**名前について:** 画面上で並べた順に連番でリネームする体験を表す **ならべて連番リネーマー**、英語名 **Visual Sequence Renamer** です。Python パッケージ名およびコマンドは短い **`renamer`** のままです（`pip install renamer` / `uv run renamer` など）。Windows 向け PyInstaller 成果物は **`SmartRenamer.exe`**（単一ファイル）。GitHub Release / CI Artifact では **`SmartRenamer.zip`**（中身は exe のみ）を配布します。
 
 ## 機能
 
@@ -29,10 +29,17 @@ uv sync
 uv run renamer
 ```
 
-開発用に依存だけ入れる場合:
+開発用に依存だけ入れる場合（Lint / テスト）:
 
 ```bash
-uv sync --all-groups
+uv sync --group dev
+```
+
+PyInstaller で Windows 用 exe を試す場合は、さらに **`build` グループ**（`pyproject.toml` の `[dependency-groups] build`）を有効にしてください。
+
+```bash
+uv sync --group dev --group build
+# またはすべてのグループ: uv sync --all-groups
 ```
 
 ## 開発
@@ -44,7 +51,7 @@ uv sync --all-groups
 | 整形 | `uv run ruff format .` |
 | 型チェック | `uv run mypy` |
 
-Windows 向け単体 EXE のビルド例（PyInstaller）は [.github/workflows/build.yml](.github/workflows/build.yml) を参照してください。
+Windows 向けビルドはリポジトリ直下の **`SmartRenamer.spec`**（`onefile`・未使用 Qt モジュール除外）と [.github/workflows/build.yml](.github/workflows/build.yml) を参照してください。ローカル例: `uv sync --group build` のうえ `uv run pyinstaller --noconfirm SmartRenamer.spec` → `dist/SmartRenamer.exe`。
 
 ## アイコンの差し替え
 
@@ -88,4 +95,4 @@ icos[0].save('src/app/resources/app_icon.ico', format='ICO', append_images=icos[
 
 ## English summary
 
-**Visual Sequence Renamer** (Japanese: **ならべて連番リネーマー**) is a **free** cross-platform (macOS / Windows) desktop app built with PySide6. Drop files, reorder them, then batch-rename to `001_originalname.ext` in the same folder. **Open source** under the **MIT License** — use freely for any purpose. The installable Python package / CLI command remains **`renamer`** for brevity; the Windows build is **`renamer.exe`**.
+**Visual Sequence Renamer** (Japanese: **ならべて連番リネーマー**) is a **free** cross-platform (macOS / Windows) desktop app built with PySide6. Drop files, reorder them, then batch-rename to `001_originalname.ext` in the same folder. **Open source** under the **MIT License** — use freely for any purpose. The installable Python package / CLI command remains **`renamer`** for brevity. Windows releases ship **`SmartRenamer.zip`** containing a single **`SmartRenamer.exe`**.

@@ -476,9 +476,11 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
+build = [
+    { name = "pyinstaller" },
+]
 dev = [
     { name = "mypy" },
-    { name = "pyinstaller" },
     { name = "pytest" },
     { name = "pytest-qt" },
     { name = "ruff" },
@@ -491,9 +493,9 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
+build = [{ name = "pyinstaller", specifier = ">=6.0.0" }]
 dev = [
     { name = "mypy", specifier = ">=1.13.0" },
-    { name = "pyinstaller", specifier = ">=6.0.0" },
     { name = "pytest", specifier = ">=8.0.0" },
     { name = "pytest-qt", specifier = ">=4.4.0" },
     { name = "ruff", specifier = ">=0.8.0" },
