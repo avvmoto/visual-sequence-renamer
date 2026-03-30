@@ -46,13 +46,14 @@ Windows 向け単体 EXE のビルド例（PyInstaller）は [.github/workflows/
 
 アプリ表示用は `src/app/resources/app_icon.png`、Windows の EXE アイコンは `src/app/resources/app_icon.ico` です。ソースは**正方形**（例: 1024×1024）を推奨します。横長・縦長のまま `resize` だけで ICO を作ると、短辺方向に引き伸ばされて**縮尺比が崩れる**ので注意してください。
 
-**PNG を差し替えたあと**は、次のコマンドで「中央を正方形にクロップ → 1024×1024 にそろえる → PNG を上書き → ICO を生成」まで一気に行えます（PyInstaller の `--icon` が参照する ICO も更新されます）。
+角の外側が白などで塗りつぶされていると、macOS / Windows のタイトルバーやタスクバーで**四角い板**のように見えます。**PNG を差し替えたあと**は、次のコマンドで「正方形化 → 角丸マスクで外周を透過 → PNG 上書き → ICO 生成」まで一気に行えます（角丸の半径は辺長の約 22.37%、一般的なアプリアイコンに近い比率です）。PyInstaller の `--icon` が参照する ICO も更新されます。
 
 ```bash
 uv run python -c "
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageChops, ImageDraw
 
+RADIUS_RATIO = 0.2237
 path = Path('src/app/resources/app_icon.png')
 img = Image.open(path).convert('RGBA')
 w, h = img.size
@@ -61,6 +62,13 @@ left = (w - side) // 2
 top = (h - side) // 2
 square = img.crop((left, top, left + side, top + side))
 square = square.resize((1024, 1024), Image.Resampling.LANCZOS)
+sw, sh = square.size
+radius = max(1, int(min(sw, sh) * RADIUS_RATIO))
+mask = Image.new('L', (sw, sh), 0)
+draw = ImageDraw.Draw(mask)
+draw.rounded_rectangle((0, 0, sw, sh), radius=radius, fill=255)
+alpha = square.split()[3]
+square.putalpha(ImageChops.multiply(alpha, mask))
 square.save(path, format='PNG')
 sizes = [256, 128, 64, 48, 32, 24, 16]
 icos = [square.resize((s, s), Image.Resampling.LANCZOS) for s in sizes]
