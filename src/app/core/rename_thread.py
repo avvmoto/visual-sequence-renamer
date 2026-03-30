@@ -26,20 +26,27 @@ class RenameThread(QThread):
         self,
         sources: list[Path],
         parent: QObject | None = None,
+        *,
+        strip_leading_index_prefix: bool = False,
     ) -> None:
         """スレッドを初期化する。
 
         Args:
             sources: リネーム対象（表示順・解決済み想定）。
             parent: 親オブジェクト。
+            strip_leading_index_prefix: 先頭の ``###_`` を除いてから連番を付けるか。
         """
         super().__init__(parent)
         self._sources = list(sources)
+        self._strip_leading_index_prefix = strip_leading_index_prefix
 
     def run(self) -> None:
         """リネームし、元に戻し用ペアをシグナルで渡す。"""
         try:
-            undo_pairs = perform_rename_in_place(self._sources)
+            undo_pairs = perform_rename_in_place(
+                self._sources,
+                strip_leading_index_prefix=self._strip_leading_index_prefix,
+            )
         except OSError as exc:
             self.failed.emit(str(exc))
         except Exception:

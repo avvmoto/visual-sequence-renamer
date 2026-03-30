@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import re
 import uuid
 from pathlib import Path
+
+# 本アプリが付与する連番プレフィックス（3桁以上の数字＋アンダースコア）を stem 先頭から除去する。
+_LEADING_INDEX_PREFIX = re.compile(r"^\d{3,}_")
 
 
 def sequence_width(total: int) -> int:
@@ -18,29 +22,66 @@ def sequence_width(total: int) -> int:
     return max(3, len(str(total)))
 
 
-def target_basename(index: int, total: int, source: Path) -> str:
+def stem_without_leading_index_prefix(stem: str) -> str:
+    """stem 先頭の「数字3桁以上＋_」を繰り返し取り除く。
+
+    同じフォルダでリネームを繰り返したとき、連番が何重にも付かないようにする。
+
+    Args:
+        stem: 拡張子を除いたファイル名。
+
+    Returns:
+        除去後の stem。すべて削って空になる場合は元の ``stem`` を返す。
+    """
+    s = stem
+    while True:
+        m = _LEADING_INDEX_PREFIX.match(s)
+        if not m:
+            break
+        s = s[m.end() :]
+    return s if s else stem
+
+
+def target_basename(
+    index: int,
+    total: int,
+    source: Path,
+    *,
+    strip_leading_index_prefix: bool = False,
+) -> str:
     """``[連番]_[元のファイル名].[拡張子]`` 形式のファイル名を返す。
 
     Args:
         index: 1 始まりの連番。
         total: 総件数（桁数決定用）。
         source: 元ファイルパス。
+        strip_leading_index_prefix: True のとき、stem 先頭の ``###_`` 形式を除いてから連番を付ける。
 
     Returns:
         新しいベース名（パス区切りなし）。
     """
     w = sequence_width(total)
     prefix = str(index).zfill(w)
-    return f"{prefix}_{source.stem}{source.suffix}"
+    stem = (
+        stem_without_leading_index_prefix(source.stem)
+        if strip_leading_index_prefix
+        else source.stem
+    )
+    return f"{prefix}_{stem}{source.suffix}"
 
 
-def perform_rename_in_place(sources: list[Path]) -> list[tuple[Path, Path]]:
+def perform_rename_in_place(
+    sources: list[Path],
+    *,
+    strip_leading_index_prefix: bool = False,
+) -> list[tuple[Path, Path]]:
     """同一フォルダ内で、表示順に連番名へリネームする。
 
     一時名を経由して相互上書きを避ける。
 
     Args:
         sources: 表示順のソースファイル（いずれも同一親ディレクトリ）。
+        strip_leading_index_prefix: ``target_basename`` に渡す先頭連番除去フラグ。
 
     Returns:
         元に戻す用の ``(リネーム後パス, リネーム前パス)`` のリスト（ファイルパスは解決済み）。
@@ -82,7 +123,12 @@ def perform_rename_in_place(sources: list[Path]) -> list[tuple[Path, Path]]:
     completed: list[tuple[Path, Path]] = []
     try:
         for i, (tmp, orig) in enumerate(staged):
-            dst = parent / target_basename(i + 1, total, orig)
+            dst = parent / target_basename(
+                i + 1,
+                total,
+                orig,
+                strip_leading_index_prefix=strip_leading_index_prefix,
+            )
             if dst.exists():
                 msg = f"既に存在します: {dst.name}"
                 raise OSError(msg)

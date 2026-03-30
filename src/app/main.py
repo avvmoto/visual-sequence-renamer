@@ -10,8 +10,8 @@ from PySide6.QtCore import Qt, QThread, QUrl
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (
     QApplication,
+    QCheckBox,
     QHBoxLayout,
-    QLabel,
     QListWidgetItem,
     QMainWindow,
     QMessageBox,
@@ -50,9 +50,14 @@ class MainWindow(QMainWindow):
         self._list.files_dropped.connect(self._on_files_dropped)
         self._list.model().rowsRemoved.connect(self._on_list_rows_removed)
 
-        self._folder_label = QLabel()
-        self._folder_label.setWordWrap(True)
-        self._sync_folder_label()
+        self._strip_index_prefix_cb = QCheckBox(
+            "先頭の「001_」形式（数字3桁以上＋_）を除いてから連番を付け直す"
+        )
+        self._strip_index_prefix_cb.setChecked(True)
+        self._strip_index_prefix_cb.setToolTip(
+            "オンにすると、同じフォルダで何度もリネームしても "
+            "001_002_… のように連番が重なりにくくなります。"
+        )
 
         btn_row = QHBoxLayout()
         self._rename_btn = QPushButton("リネーム実行")
@@ -65,20 +70,11 @@ class MainWindow(QMainWindow):
         btn_row.addStretch(1)
 
         layout.addWidget(self._list, stretch=1)
-        layout.addWidget(self._folder_label)
+        layout.addWidget(self._strip_index_prefix_cb)
         layout.addLayout(btn_row)
 
         self.setCentralWidget(central)
         self.setStatusBar(QStatusBar())
-
-    def _sync_folder_label(self) -> None:
-        """登録フォルダの説明を更新する。"""
-        if self._allowed_root is None:
-            self._folder_label.setText(
-                "登録フォルダ: 未設定（先頭ファイルのフォルダに固定。他フォルダは追加不可）"
-            )
-        else:
-            self._folder_label.setText(f"登録フォルダ: {self._allowed_root}")
 
     def _clear_undo(self) -> None:
         """元に戻し情報を破棄する。"""
@@ -91,7 +87,6 @@ class MainWindow(QMainWindow):
             return
         if self._list.count() == 0:
             self._allowed_root = None
-            self._sync_folder_label()
         self._clear_undo()
 
     def _list_paths_in_order(self) -> list[Path]:
@@ -109,6 +104,7 @@ class MainWindow(QMainWindow):
     def _set_busy(self, busy: bool) -> None:
         """バックグラウンド処理中の UI 状態。"""
         self._list.setEnabled(not busy)
+        self._strip_index_prefix_cb.setEnabled(not busy)
         self._rename_btn.setEnabled(not busy)
         self._undo_btn.setEnabled(not busy and self._undo_pairs is not None)
 
@@ -160,7 +156,6 @@ class MainWindow(QMainWindow):
         parent = resolved.parent
         if self._allowed_root is None:
             self._allowed_root = parent
-            self._sync_folder_label()
         elif parent != self._allowed_root:
             self.statusBar().showMessage(
                 f"登録フォルダ外のため追加できません: {path.name}",
@@ -205,7 +200,11 @@ class MainWindow(QMainWindow):
         self._set_busy(True)
         self.statusBar().showMessage("リネーム処理中…", 0)
 
-        thread = RenameThread(sources, self)
+        thread = RenameThread(
+            sources,
+            self,
+            strip_leading_index_prefix=self._strip_index_prefix_cb.isChecked(),
+        )
         self._worker_thread = thread
         thread.finished_ok.connect(self._on_rename_finished_ok)
         thread.failed.connect(self._worker_failed)
