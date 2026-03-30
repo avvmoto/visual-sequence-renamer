@@ -16,6 +16,12 @@
 
 詳細な仕様は [spec.md](spec.md) を参照してください。
 
+## 操作デモ（動画）
+
+追加・並べ替え・リネームまでの一連の操作を [docs/public/images/trust/renamer.webm](docs/public/images/trust/renamer.webm) で確認できます（ランディングページでは同内容の MP4 をループ再生しています）。
+
+<video src="docs/public/images/trust/renamer.webm" controls loop muted playsinline width="100%"></video>
+
 ## 必要環境
 
 - Python 3.10 以上

@@ -9,10 +9,59 @@ if (!page) {
 const { Content } = await page.render();
 const fm = page.data;
 
-const downloadUrl = import.meta.env.PUBLIC_DOWNLOAD_URL?.trim() || "#";
-const downloadMacUrl = import.meta.env.PUBLIC_MACOS_DOWNLOAD_URL?.trim() || "";
-const githubUrl = import.meta.env.PUBLIC_GITHUB_URL?.trim() || "https://github.com/";
+/** タイトルは1式にまとめる（文中の `</` 連続を避け、minify 時の誤パース防止） */
+const documentTitle = `${fm.hero.titleJa} – ${fm.hero.titleEn}`;
+
 const base = import.meta.env.BASE_URL;
+
+/** 警告スクショは実寸の 50% 相当で表示（アスペクト比維持） */
+const TRUST_IMG = {
+  win: { w: 401, h: 375, maxClass: "max-w-[401px]" },
+  mac1: { w: 372, h: 358, maxClass: "max-w-[372px]" },
+  mac2: { w: 470, h: 111, maxClass: "max-w-[470px]" },
+} as const;
+
+/** `PUBLIC_GITHUB_URL` から `owner/repo` を取り出す（トップページだけ等は null）。 */
+function parseGitHubRepo(url: string): string | null {
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+  try {
+    const u = new URL(trimmed);
+    if (u.hostname !== "github.com") return null;
+    const seg = u.pathname.replace(/^\/+|\/+$/g, "").split("/").filter(Boolean);
+    if (seg.length >= 2) {
+      return `https://github.com/${seg[0]}/${seg[1]}`;
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+const repoBase = parseGitHubRepo(import.meta.env.PUBLIC_GITHUB_URL ?? "");
+const githubUrl = repoBase ?? "https://github.com/";
+
+const downloadUrl =
+  import.meta.env.PUBLIC_DOWNLOAD_URL?.trim() ||
+  (repoBase ? `${repoBase}/releases/latest/download/SmartRenamer.zip` : "") ||
+  "#";
+
+const downloadMacUrl =
+  import.meta.env.PUBLIC_MACOS_DOWNLOAD_URL?.trim() ||
+  (repoBase ? `${repoBase}/releases/latest/download/SmartRenamer-macos.zip` : "") ||
+  (repoBase ? `${repoBase}/releases/latest` : "#");
+
+/** Markdown 風の **太字** を <strong> に変換（LP 用・静的コンテンツのみ）。 */
+function inlineBold(html: string): string {
+  return html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+}
+
+/** `public/` 配下の相対パス（先頭スラッシュなし）に `base` を付与する。 */
+function publicAsset(relativePath: string): string {
+  const p = relativePath.replace(/^\/+/, "");
+  const b = base.endsWith("/") ? base : `${base}/`;
+  return `${b}${p}`;
+}
 ---
 
 <!doctype html>
@@ -20,7 +69,7 @@ const base = import.meta.env.BASE_URL;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{fm.hero.titleJa} ({fm.hero.titleEn}) — Visual Sequence Renamer</title>
+    <title>{documentTitle}</title>
     <meta
       name="description"
       content={fm.hero.subtitle}
@@ -53,8 +102,9 @@ const base = import.meta.env.BASE_URL;
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-white"
-      >メインへスキップ</a
     >
+      メインへスキップ
+    </a>
 
     <header
       class="sticky top-0 z-40 border-b border-ink-200/80 bg-ink-50/90 backdrop-blur-md dark:border-ink-800 dark:bg-ink-950/90"
@@ -66,9 +116,7 @@ const base = import.meta.env.BASE_URL;
           <span class="text-sm font-semibold tracking-tight text-ink-900 dark:text-white">
             {fm.hero.titleJa}
           </span>
-          <span class="text-xs text-ink-500 dark:text-ink-400">
-            Visual Sequence Renamer
-          </span>
+          <span class="text-xs text-ink-500 dark:text-ink-400">{fm.hero.titleEn}</span>
         </a>
         <div class="flex items-center gap-2">
           <a
@@ -150,32 +198,28 @@ const base = import.meta.env.BASE_URL;
               </svg>
               {fm.hero.downloadLabel}
             </a>
-            {
-              downloadMacUrl && (
-                <a
-                  href={downloadMacUrl}
-                  class="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-accent/40 bg-white px-8 py-4 text-base font-semibold text-accent transition hover:bg-accent/5 focus:outline-none focus:ring-2 focus:ring-accent-glow focus:ring-offset-2 dark:bg-ink-900 dark:text-accent-glow dark:hover:bg-ink-800 dark:ring-offset-ink-950"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <svg
-                    class="h-5 w-5 shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5m-5-9v14"
-                    />
-                  </svg>
-                  {fm.hero.downloadMacLabel}
-                </a>
-              )
-            }
+            <a
+              href={downloadMacUrl}
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-8 py-4 text-base font-semibold text-white shadow-lg shadow-accent/30 transition hover:bg-accent-dim focus:outline-none focus:ring-2 focus:ring-accent-glow focus:ring-offset-2 dark:shadow-soft-dark dark:ring-offset-ink-950"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <svg
+                class="h-5 w-5 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5m-5-9v14"
+                />
+              </svg>
+              {fm.hero.downloadMacLabel}
+            </a>
             <a
               href={githubUrl}
               class="inline-flex items-center justify-center rounded-xl border border-ink-300 bg-white px-6 py-4 text-base font-medium text-ink-800 transition hover:bg-ink-50 dark:border-ink-600 dark:bg-ink-900 dark:text-ink-100 dark:hover:bg-ink-800 sm:hidden"
@@ -235,50 +279,201 @@ const base = import.meta.env.BASE_URL;
         class="border-y border-ink-200/80 bg-ink-100/50 py-16 dark:border-ink-800 dark:bg-ink-900/40 sm:py-20"
         aria-labelledby="how-heading"
       >
-        <div class="mx-auto max-w-5xl px-4 sm:px-6">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6">
           <h2
             id="how-heading"
             class="text-center text-2xl font-bold text-ink-950 dark:text-white sm:text-3xl"
           >
-            使い方（3 ステップ）
+            {fm.how.title}
           </h2>
-          <p class="mx-auto mt-3 max-w-2xl text-center text-ink-600 dark:text-ink-400">
-            スクリーンショットはプレースホルダです。あとから画像に差し替えられます。
+          <p class="mx-auto mt-3 max-w-2xl text-center text-[15px] leading-relaxed text-ink-600 dark:text-ink-400">
+            {fm.how.lead}
           </p>
-          <ol class="mt-12 space-y-12">
+          <div
+            class="mt-8 overflow-hidden rounded-2xl border border-ink-200/90 bg-ink-950 shadow-lg dark:border-ink-700 dark:bg-black"
+          >
+            <video
+              class="mx-auto block w-full max-h-[min(70vh,720px)] object-contain"
+              src={publicAsset("images/trust/renamer.mp4")}
+              loop
+              muted
+              playsinline
+              autoplay
+              controls
+              aria-label="ならべて連番リネーマーの操作デモ動画（ループ再生）"
+            >
+              お使いのブラウザは動画タグに対応していません。
+            </video>
+          </div>
+          <ol class="mt-10 grid gap-4 sm:grid-cols-3 sm:gap-5">
             {
               fm.steps.map((step, i) => (
-                <li class="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-10">
-                  <div
-                    class={`flex flex-1 flex-col ${i % 2 === 1 ? "lg:order-2" : ""}`}
-                  >
-                    <span class="text-sm font-semibold uppercase tracking-wider text-accent">
-                      Step {i + 1}
-                    </span>
-                    <h3 class="mt-1 text-xl font-bold text-ink-950 dark:text-white">
-                      {step.title}
-                    </h3>
-                    <p class="mt-2 text-ink-600 dark:text-ink-400">{step.caption}</p>
-                  </div>
-                  <div
-                    class={`flex flex-1 justify-center ${i % 2 === 1 ? "lg:order-1" : ""}`}
-                  >
-                    <div
-                      class="flex aspect-video w-full max-w-md items-center justify-center rounded-2xl border-2 border-dashed border-ink-300 bg-gradient-to-br from-ink-100 to-ink-200 text-ink-500 shadow-inner dark:border-ink-600 dark:from-ink-800 dark:to-ink-900 dark:text-ink-500"
-                      role="img"
-                      aria-label={`ステップ ${i + 1} のスクリーンショット（プレースホルダ）`}
-                    >
-                      <span class="px-4 text-center text-sm font-medium">
-                        スクリーンショット
-                        <br />
-                        <span class="text-xs opacity-80">準備中 · 16:9</span>
-                      </span>
-                    </div>
-                  </div>
+                <li class="flex flex-col rounded-xl border border-ink-200/90 bg-white p-4 shadow-sm dark:border-ink-700/80 dark:bg-ink-900/50">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-accent">
+                    Step {i + 1}
+                  </span>
+                  <h3 class="mt-1 text-base font-bold text-ink-950 dark:text-white">{step.title}</h3>
+                  <p class="mt-2 text-sm leading-relaxed text-ink-600 dark:text-ink-400">{step.caption}</p>
                 </li>
               ))
             }
           </ol>
+        </div>
+      </section>
+
+      <section
+        class="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16"
+        aria-labelledby="trust-heading"
+      >
+        <h2
+          id="trust-heading"
+          class="text-center text-2xl font-bold text-ink-950 dark:text-white sm:text-3xl"
+        >
+          {fm.trust.title}
+        </h2>
+        <div
+          class="mt-8 overflow-hidden rounded-2xl border border-sky-200/90 bg-gradient-to-b from-sky-50/95 to-slate-50/90 shadow-sm dark:border-sky-900/50 dark:from-sky-950/35 dark:to-slate-950/50"
+          role="region"
+          aria-label={fm.trust.title}
+        >
+          <div
+            class="flex gap-3 border-b border-sky-200/70 bg-sky-100/60 px-5 py-3.5 dark:border-sky-900/40 dark:bg-sky-950/40"
+          >
+            <span
+              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-200/80 text-sky-800 dark:bg-sky-900/80 dark:text-sky-200"
+              aria-hidden="true"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </span>
+            <p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+              初めてダウンロードしたアプリを実行するとき、Windows や macOS
+              が「PC を保護しました」などのメッセージを出すことがあります。以下に、よくある警告への対処と、オープンソースとして検証できる理由をまとめています。
+            </p>
+          </div>
+          <div class="space-y-8 px-5 py-6 sm:px-8 sm:py-8">
+            <div
+              class="rounded-xl border border-slate-200/80 bg-white/70 px-4 py-4 text-[15px] leading-relaxed text-slate-700 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/35 dark:text-slate-300"
+            >
+              <p class="[&_strong]:font-semibold [&_strong]:text-slate-900 dark:[&_strong]:text-slate-100" set:html={inlineBold(fm.trust.intro)} />
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                {fm.trust.windowsTitle}
+              </h3>
+              <div class="mt-4 flex flex-col gap-5">
+                <ol class="grid gap-3 sm:gap-4">
+                  {
+                    fm.trust.windowsSteps.map((text, i) => (
+                      <li class="flex gap-4 rounded-xl border border-slate-200/90 bg-white/90 p-4 shadow-sm dark:border-slate-700/80 dark:bg-slate-900/40">
+                        <span
+                          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-800 dark:bg-sky-950 dark:text-sky-200"
+                          aria-hidden="true"
+                        >
+                          {i + 1}
+                        </span>
+                        <p
+                          class="flex-1 pt-1 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300 [&_strong]:font-semibold [&_strong]:text-slate-900 dark:[&_strong]:text-slate-100"
+                          set:html={inlineBold(text)}
+                        />
+                      </li>
+                    ))
+                  }
+                </ol>
+                <figure
+                  class="mx-auto w-full max-w-full overflow-hidden rounded-xl border border-slate-200/90 bg-slate-100/40 p-2 dark:border-slate-700 dark:bg-slate-900/40"
+                >
+                  <img
+                    src={publicAsset(fm.trust.windowsImage.src)}
+                    alt={fm.trust.windowsImage.alt}
+                    width={TRUST_IMG.win.w}
+                    height={TRUST_IMG.win.h}
+                    class={`mx-auto block h-auto w-full ${TRUST_IMG.win.maxClass} object-contain`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption class="mt-2 px-1 text-center text-xs leading-snug text-slate-500 dark:text-slate-400">
+                    {fm.trust.windowsImage.alt}
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="rounded-xl border border-slate-200/60 bg-slate-50/80 p-4 dark:border-slate-700/50 dark:bg-slate-900/25 sm:p-5">
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                {fm.trust.macTitle}
+              </h3>
+              <div class="mt-4 flex flex-col gap-5">
+                <ol class="grid gap-3 sm:gap-4">
+                  {
+                    fm.trust.macSteps.map((text, i) => (
+                      <li class="flex gap-4 rounded-xl border border-slate-200/90 bg-white/90 p-4 shadow-sm dark:border-slate-700/80 dark:bg-slate-900/40">
+                        <span
+                          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-800 dark:bg-sky-950 dark:text-sky-200"
+                          aria-hidden="true"
+                        >
+                          {i + 1}
+                        </span>
+                        <p
+                          class="flex-1 pt-1 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300 [&_strong]:font-semibold [&_strong]:text-slate-900 dark:[&_strong]:text-slate-100"
+                          set:html={inlineBold(text)}
+                        />
+                      </li>
+                    ))
+                  }
+                </ol>
+                <div class="flex w-full flex-col items-center gap-5">
+                  {
+                    fm.trust.macImages.map((shot) => {
+                      const macWideStrip = shot.src.includes("mac_warn2");
+                      const dim = macWideStrip ? TRUST_IMG.mac2 : TRUST_IMG.mac1;
+                      return (
+                        <figure class="w-full max-w-full overflow-hidden rounded-xl border border-slate-200/90 bg-slate-100/40 p-2 dark:border-slate-700 dark:bg-slate-900/40">
+                          <img
+                            src={publicAsset(shot.src)}
+                            alt={shot.alt}
+                            width={dim.w}
+                            height={dim.h}
+                            class={`mx-auto block h-auto w-full ${dim.maxClass} object-contain`}
+                            loading="lazy"
+                            decoding="async"
+                          />
+                          <figcaption class="mt-2 px-1 text-center text-xs leading-snug text-slate-500 dark:text-slate-400">
+                            {shot.alt}
+                          </figcaption>
+                        </figure>
+                      );
+                    })
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col items-stretch gap-3 border-t border-slate-200/80 pt-6 dark:border-slate-700/60 sm:flex-row sm:items-center sm:justify-between">
+              <p class="text-sm text-slate-600 dark:text-slate-400">
+                リポジトリ内のコードと <code class="rounded bg-slate-200/80 px-1.5 py-0.5 text-xs dark:bg-slate-800">.github/workflows</code>{" "}
+                をご確認ください。
+              </p>
+              <a
+                href={githubUrl}
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-800 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 dark:bg-sky-900/70 dark:hover:bg-sky-800 dark:focus:ring-offset-slate-950"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg class="h-4 w-4 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    fill-rule="evenodd"
+                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                {fm.trust.sourceCta}
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 
