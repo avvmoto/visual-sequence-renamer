@@ -93,6 +93,35 @@ icos[0].save('src/app/resources/app_icon.ico', format='ICO', append_images=icos[
 "
 ```
 
+### macOS の Finder でアイコンが出ないとき
+
+**コード署名の有無が主因ではありません。** 未署名でも、`Contents/Resources` に **`.icns`** が入り `Info.plist` の **`CFBundleIconFile`**（PyInstaller の `BUNDLE` で `icon=` を渡すと自動設定）が効いていれば Finder はカスタムアイコンを表示します。
+
+`VisualSequenceRenamer_macos.spec` は **`src/app/resources/app_icon.icns` が存在する場合だけ** `icon=` を設定します。いまリポジトリの `resources` に **`.icns` が無い**と `icon=None` のままビルドされ、**汎用の実行ファイルアイコン**のままになります（実行はできるが Finder の見た目だけ付かない、という状態になりやすい）。
+
+PNG から macOS 用 `.icns` を作る例（プロジェクトルートで、上の手順で正方形 `app_icon.png` を用意したあと）:
+
+```bash
+set -e
+PNG=src/app/resources/app_icon.png
+SET=build/AppIcon.iconset
+OUT=src/app/resources/app_icon.icns
+mkdir -p "$SET"
+for spec in "16:icon_16x16.png" "32:icon_16x16@2x.png" "32:icon_32x32.png" "64:icon_32x32@2x.png" \
+            "128:icon_128x128.png" "256:icon_128x128@2x.png" "256:icon_256x256.png" "512:icon_256x256@2x.png" \
+            "512:icon_512x512.png" "1024:icon_512x512@2x.png"; do
+  size="${spec%%:*}"
+  name="${spec#*:}"
+  sips -z "$size" "$size" "$PNG" --out "$SET/$name" >/dev/null
+done
+iconutil -c icns "$SET" -o "$OUT"
+rm -rf "$SET"
+```
+
+その後 `uv run pyinstaller --noconfirm VisualSequenceRenamer_macos.spec` で `.app` を作り直してください。
+
+配布で Gatekeeper の警告を減らしたい場合は、別途 **Apple Developer での署名／公証（notarization）** が必要ですが、それは Finder のアイコン表示とは別の話です。
+
 ## ライセンス
 
 [MIT License](LICENSE)

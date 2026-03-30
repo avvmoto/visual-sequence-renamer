@@ -74,6 +74,9 @@ function publicAsset(relativePath: string): string {
       name="description"
       content={fm.hero.subtitle}
     />
+    <link rel="icon" href={publicAsset("favicon.ico")} sizes="any" />
+    <link rel="icon" type="image/png" href={publicAsset("app-icon.png")} />
+    <link rel="apple-touch-icon" href={publicAsset("app-icon.png")} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -112,11 +115,22 @@ function publicAsset(relativePath: string): string {
       <div
         class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6"
       >
-        <a href={base} class="group flex flex-col leading-tight">
-          <span class="text-sm font-semibold tracking-tight text-ink-900 dark:text-white">
-            {fm.hero.titleJa}
+        <a href={base} class="group flex items-center gap-3 leading-tight">
+          <img
+            src={publicAsset("app-icon.png")}
+            alt=""
+            width="40"
+            height="40"
+            class="h-9 w-9 shrink-0 rounded-xl shadow-sm ring-1 ring-ink-200/80 dark:ring-ink-700"
+            loading="eager"
+            decoding="async"
+          />
+          <span class="flex flex-col">
+            <span class="text-sm font-semibold tracking-tight text-ink-900 dark:text-white">
+              {fm.hero.titleJa}
+            </span>
+            <span class="text-xs text-ink-500 dark:text-ink-400">{fm.hero.titleEn}</span>
           </span>
-          <span class="text-xs text-ink-500 dark:text-ink-400">{fm.hero.titleEn}</span>
         </a>
         <div class="flex items-center gap-2">
           <a
@@ -155,131 +169,114 @@ function publicAsset(relativePath: string): string {
         >
         </div>
         <div class="relative mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-24">
-          <p
-            class="mb-4 inline-flex rounded-full border border-ink-200 bg-white/80 px-3 py-1 text-xs font-medium text-ink-600 shadow-sm dark:border-ink-700 dark:bg-ink-900/80 dark:text-ink-300"
-          >
-            {fm.hero.badge}
-          </p>
-          <h1
-            class="text-balance text-4xl font-bold tracking-tight text-ink-950 dark:text-white sm:text-5xl lg:text-6xl"
-          >
-            <span class="block">{fm.hero.titleJa}</span>
-            <span
-              class="mt-1 block bg-gradient-to-r from-accent to-purple-500 bg-clip-text text-3xl text-transparent sm:text-4xl lg:text-5xl"
-            >
-              {fm.hero.titleEn}
-            </span>
-          </h1>
-          <p
-            class="mt-6 max-w-2xl text-lg leading-relaxed text-ink-600 dark:text-ink-300"
-          >
-            {fm.hero.subtitle}
-          </p>
-          <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
-            <a
-              href={downloadUrl}
-              class="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-8 py-4 text-base font-semibold text-white shadow-lg shadow-accent/30 transition hover:bg-accent-dim focus:outline-none focus:ring-2 focus:ring-accent-glow focus:ring-offset-2 dark:shadow-soft-dark dark:ring-offset-ink-950"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <svg
-                class="h-5 w-5 shrink-0"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
+          <div class="flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-12 xl:gap-16">
+            <div class="min-w-0 flex-1">
+              <p
+                class="mb-4 inline-flex rounded-full border border-ink-200 bg-white/80 px-3 py-1 text-xs font-medium text-ink-600 shadow-sm dark:border-ink-700 dark:bg-ink-900/80 dark:text-ink-300"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5m-5-9v14"
-                />
-              </svg>
-              {fm.hero.downloadLabel}
-            </a>
-            <a
-              href={downloadMacUrl}
-              class="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-8 py-4 text-base font-semibold text-white shadow-lg shadow-accent/30 transition hover:bg-accent-dim focus:outline-none focus:ring-2 focus:ring-accent-glow focus:ring-offset-2 dark:shadow-soft-dark dark:ring-offset-ink-950"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <svg
-                class="h-5 w-5 shrink-0"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
+                {fm.hero.badge}
+              </p>
+              <h1
+                class="text-balance text-4xl font-bold tracking-tight text-ink-950 dark:text-white sm:text-5xl lg:text-6xl"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5m-5-9v14"
-                />
-              </svg>
-              {fm.hero.downloadMacLabel}
-            </a>
-            <a
-              href={githubUrl}
-              class="inline-flex items-center justify-center rounded-xl border border-ink-300 bg-white px-6 py-4 text-base font-medium text-ink-800 transition hover:bg-ink-50 dark:border-ink-600 dark:bg-ink-900 dark:text-ink-100 dark:hover:bg-ink-800 sm:hidden"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              ソースを見る
-            </a>
+                <span class="block">{fm.hero.titleJa}</span>
+                <span
+                  class="mt-1 block bg-gradient-to-r from-accent to-purple-500 bg-clip-text text-3xl text-transparent sm:text-4xl lg:text-5xl"
+                >
+                  {fm.hero.titleEn}
+                </span>
+              </h1>
+              <p
+                class="mt-6 max-w-2xl text-lg leading-relaxed text-ink-600 dark:text-ink-300"
+              >
+                {fm.hero.subtitle}
+              </p>
+              <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+                <a
+                  href={downloadUrl}
+                  class="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-8 py-4 text-base font-semibold text-white shadow-lg shadow-accent/30 transition hover:bg-accent-dim focus:outline-none focus:ring-2 focus:ring-accent-glow focus:ring-offset-2 dark:shadow-soft-dark dark:ring-offset-ink-950"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg
+                    class="h-5 w-5 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5m-5-9v14"
+                    />
+                  </svg>
+                  {fm.hero.downloadLabel}
+                </a>
+                <a
+                  href={downloadMacUrl}
+                  class="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-8 py-4 text-base font-semibold text-white shadow-lg shadow-accent/30 transition hover:bg-accent-dim focus:outline-none focus:ring-2 focus:ring-accent-glow focus:ring-offset-2 dark:shadow-soft-dark dark:ring-offset-ink-950"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg
+                    class="h-5 w-5 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5m-5-9v14"
+                    />
+                  </svg>
+                  {fm.hero.downloadMacLabel}
+                </a>
+                <a
+                  href={githubUrl}
+                  class="inline-flex items-center justify-center rounded-xl border border-ink-300 bg-white px-6 py-4 text-base font-medium text-ink-800 transition hover:bg-ink-50 dark:border-ink-600 dark:bg-ink-900 dark:text-ink-100 dark:hover:bg-ink-800 sm:hidden"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  ソースを見る
+                </a>
+              </div>
+            </div>
+            <div class="mx-auto flex shrink-0 justify-center lg:mx-0 lg:justify-end">
+              <img
+                src={publicAsset("app-icon.png")}
+                alt="ならべて連番リネーマーのアプリアイコン"
+                width="256"
+                height="256"
+                class="h-36 w-36 rounded-3xl shadow-xl shadow-ink-900/10 ring-1 ring-ink-200/90 dark:shadow-black/40 dark:ring-ink-600 sm:h-44 sm:w-44 lg:h-48 lg:w-48"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
           </div>
-          <p class="mt-4 text-sm text-ink-500 dark:text-ink-400">
-            最新リリースの
-            <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800">VisualSequenceRenamer.zip</code>
-            （Windows・展開後 <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800"
-              >VisualSequenceRenamer.exe</code
-            >）と
-            <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800"
-              >VisualSequenceRenamer-macos.zip</code
-            >（macOS・展開後 <code class="rounded bg-ink-200/80 px-1.5 py-0.5 text-xs dark:bg-ink-800"
-              >VisualSequenceRenamer.app</code
-            >）へリンクします。未リリースやアセット名不一致の場合は 404 になることがあります。
-          </p>
         </div>
       </section>
 
-      <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20" aria-labelledby="features-heading">
-        <h2
-          id="features-heading"
-          class="text-center text-2xl font-bold text-ink-950 dark:text-white sm:text-3xl"
-        >
-          主な機能
-        </h2>
-        <p class="mx-auto mt-3 max-w-2xl text-center text-ink-600 dark:text-ink-400">
-          仕様に基づき、実際の挙動で重視しているポイントをまとめました。
-        </p>
-        <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {
-            fm.features.map((f) => (
-              <li
-                class="group flex flex-col rounded-2xl border border-ink-200 bg-white p-6 shadow-soft transition hover:border-accent/40 hover:shadow-lg dark:border-ink-800 dark:bg-ink-900/60 dark:shadow-none dark:hover:border-accent/30"
-              >
-                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent dark:bg-accent/20 dark:text-accent-glow">
-                  <FeatureIcon id={f.id} class="h-7 w-7" />
-                </div>
-                <h3 class="text-lg font-semibold text-ink-950 dark:text-white">
-                  {f.title}
-                </h3>
-                <p class="mt-2 flex-1 text-sm leading-relaxed text-ink-600 dark:text-ink-400">
-                  {f.description}
-                </p>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-
       <section
-        class="border-y border-ink-200/80 bg-ink-100/50 py-16 dark:border-ink-800 dark:bg-ink-900/40 sm:py-20"
+        class="border-b border-ink-200/80 bg-ink-100/50 py-16 dark:border-ink-800 dark:bg-ink-900/40 sm:py-20"
         aria-labelledby="how-heading"
       >
         <div class="mx-auto max-w-4xl px-4 sm:px-6">
+          <div class="mb-6 flex justify-center">
+            <img
+              src={publicAsset("app-icon.png")}
+              alt=""
+              width="56"
+              height="56"
+              class="h-14 w-14 rounded-2xl shadow-md ring-1 ring-ink-200/80 dark:ring-ink-700"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
           <h2
             id="how-heading"
             class="text-center text-2xl font-bold text-ink-950 dark:text-white sm:text-3xl"
@@ -321,10 +318,63 @@ function publicAsset(relativePath: string): string {
         </div>
       </section>
 
+      <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20" aria-labelledby="features-heading">
+        <div class="mb-2 flex justify-center">
+          <img
+            src={publicAsset("app-icon.png")}
+            alt=""
+            width="48"
+            height="48"
+            class="h-12 w-12 rounded-2xl opacity-90 shadow-sm ring-1 ring-ink-200/70 dark:ring-ink-700"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <h2
+          id="features-heading"
+          class="text-center text-2xl font-bold text-ink-950 dark:text-white sm:text-3xl"
+        >
+          主な機能
+        </h2>
+        <p class="mx-auto mt-3 max-w-2xl text-center text-ink-600 dark:text-ink-400">
+          仕様に基づき、実際の挙動で重視しているポイントをまとめました。
+        </p>
+        <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            fm.features.map((f) => (
+              <li
+                class="group flex flex-col rounded-2xl border border-ink-200 bg-white p-6 shadow-soft transition hover:border-accent/40 hover:shadow-lg dark:border-ink-800 dark:bg-ink-900/60 dark:shadow-none dark:hover:border-accent/30"
+              >
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent dark:bg-accent/20 dark:text-accent-glow">
+                  <FeatureIcon id={f.id} class="h-7 w-7" />
+                </div>
+                <h3 class="text-lg font-semibold text-ink-950 dark:text-white">
+                  {f.title}
+                </h3>
+                <p class="mt-2 flex-1 text-sm leading-relaxed text-ink-600 dark:text-ink-400">
+                  {f.description}
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
       <section
         class="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16"
         aria-labelledby="trust-heading"
       >
+        <div class="mb-2 flex justify-center">
+          <img
+            src={publicAsset("app-icon.png")}
+            alt=""
+            width="48"
+            height="48"
+            class="h-12 w-12 rounded-2xl opacity-90 shadow-sm ring-1 ring-ink-200/70 dark:ring-ink-700"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
         <h2
           id="trust-heading"
           class="text-center text-2xl font-bold text-ink-950 dark:text-white sm:text-3xl"
@@ -459,7 +509,7 @@ function publicAsset(relativePath: string): string {
               </p>
               <a
                 href={githubUrl}
-                class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-800 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 dark:bg-sky-900/70 dark:hover:bg-sky-800 dark:focus:ring-offset-slate-950"
+                class="inline-flex items-center justify-center gap-2 rounded-xl border border-sky-500/30 bg-sky-600 px-5 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 focus:ring-offset-white dark:border-sky-700/50 dark:bg-sky-800 dark:hover:bg-sky-700 dark:focus:ring-offset-slate-950"
                 target="_blank"
                 rel="noopener noreferrer"
               >
