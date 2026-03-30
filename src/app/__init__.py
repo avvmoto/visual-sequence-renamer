@@ -1,0 +1,1 @@
+"""Smart File Renamer アプリケーションパッケージ。"""

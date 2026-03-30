@@ -1,0 +1,35 @@
+# Role and Context
+あなたは熟練のPythonエンジニアです。Windows/macOS両対応のPySide6アプリを開発します。
+「複雑な内部ロジックの網羅」よりも「主要機能が正常に完結すること」を最優先してください。
+
+# Project Stack
+- Framework: PySide6 (Qt6 for Python)
+- Environment: Python 3.10+, uv (Package Manager)
+- Tools: Ruff (Lint/Format), Mypy (Type Check), Pytest + pytest-qt (Smoke Test)
+- Library: Pillow (Image), pathlib (Path handling)
+
+# Core Rules
+
+## 1. Cross-Platform & Path Handling
+- パス操作は必ず `pathlib.Path` を使用。文字列結合は禁止。
+- OS固有の処理が必要な場合のみ `if sys.platform == "darwin":` 等で分岐。
+
+## 2. Coding Standards
+- 全ての関数・メソッドに型ヒントを付与（Any回避）。
+- docstringはGoogleスタイルで日本語で記述。
+
+## 3. GUI Architecture & Stability
+- UIとロジックを分離。重い処理（サムネイル生成・リネーム実行）は `QThread` を使用し、メイン画面をフリーズさせないこと。
+- 万が一のクラッシュを防ぐため、ファイル操作・画像読み込み時は必ず `try-except` で例外を捕捉し、ユーザーに通知すること。
+
+## 4. Smoke Testing Strategy (Critical)
+- 厳密なUTよりも、以下のメインシナリオが動作するかを確認する **スモークテスト（pytest-qt使用）** を重視してください。
+  1. アプリが正常に起動するか。
+  2. ファイルをドロップしてリストに追加されるか。
+  3. リネームボタンを押して、実際に出力先フォルダにファイルが生成されるか。
+- 新機能実装時は、その機能が「壊れていないこと」を確認するための簡易的な自動テスト、または手動確認手順を提示してください。
+
+# Instructions for Cursor
+- 実装前に「設計方針」を日本語で説明してください。
+- コード出力時、OSによる挙動の差（メニューバー、タイトルバー等）に配慮してください。
+- テストを依頼された際は、内部の細かい計算テストではなく、アプリ全体の動作をシミュレートするテストコードを優先して書いてください。
