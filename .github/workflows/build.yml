@@ -1,0 +1,46 @@
+# main ブランチへのプッシュ時のみ: Windows で PyInstaller ビルドし Artifacts に保存する。
+name: Build Windows executable
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: build-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Sync dependencies (including dev / PyInstaller)
+        run: uv sync --all-groups
+
+      - name: Build with PyInstaller
+        run: >
+          uv run pyinstaller
+          --noconfirm
+          --clean
+          --name renamer
+          --windowed
+          --paths src
+          --collect-all PySide6
+          --collect-all shiboken6
+          src/app/main.py
+
+      - name: Upload dist to GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: renamer-windows
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
