@@ -1,8 +1,6 @@
 # ならべて連番リネーマー（Visual Sequence Renamer）
 
-<video controls autoplay muted loop playsinline width="100%">
-  <source src="docs/public/images/trust/renamer.mp4" type="video/mp4" />
-</video>
+![](docs/public/images/trust/renamer.mp4)
 
 **無料のフリーソフト**です。ソースコードは公開された **オープンソース（MIT License）** であり、利用・改変・再配布はライセンスの範囲内で自由です。
 
