@@ -2,6 +2,9 @@
 # リポジトリ Settings → Pages → Source を「GitHub Actions」に設定してください。
 name: Deploy GitHub Pages
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   push:
     branches:
@@ -9,8 +12,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages-${{ github.ref }}
@@ -19,9 +20,12 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -39,7 +43,6 @@ jobs:
         env:
           ASTRO_TELEMETRY_DISABLED: "1"
           PUBLIC_SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
-          # ユーザー/組織の <name>.github.io リポジトリでルート公開する場合は空にし、astro.config の base を調整してください。
           PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
           PUBLIC_DOWNLOAD_URL: https://github.com/${{ github.repository }}/releases/latest/download/VisualSequenceRenamer.zip
           PUBLIC_MACOS_DOWNLOAD_URL: https://github.com/${{ github.repository }}/releases/latest/download/VisualSequenceRenamer-macos.zip
@@ -54,6 +57,11 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      actions: read
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
