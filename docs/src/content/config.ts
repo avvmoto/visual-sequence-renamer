@@ -35,7 +35,10 @@ const landing = defineCollection({
     ),
     trust: z.object({
       title: z.string(),
-      intro: z.string(),
+      whyWarning: z.object({
+        title: z.string(),
+        body: z.string(),
+      }),
       windowsTitle: z.string(),
       windowsSteps: z.array(z.string()),
       windowsImage: screenshot,

@@ -31,8 +31,10 @@ steps:
     caption: 「リネーム実行」で一括変更。万が一間違えても、すぐ元に戻せます。
 
 trust:
-  title: セキュリティと信頼について
-  intro: "「警告が出るけど大丈夫？」と不安になるかもしれませんが、ご安心ください。本ソフトは個人が無料で公開しているため、AppleやMicrosoftの有料認証（高額な署名）を受けていないだけです。プログラムの中身はすべてGitHubで公開されており、誰でも安全性を確認できる透明性の高いソフトウェアです。"
+  title: セキュリティと透明性について
+  whyWarning:
+    title: 「警告」が表示される理由
+    body: "初回実行時などに OS から警告が出ることがあります。個人開発の無料アプリとして、**Apple / Microsoft の有料コード署名**は付けていないため、大手アプリのように自動で「信頼済み」とは表示されません。その代わり、 **GitHub でソースコードを全て公開**し、誰でも見える手順でビルドしています。 **Sigstore**（<a href=\"https://docs.github.com/ja/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds\" target=\"_blank\" rel=\"noopener noreferrer\">GitHub Artifact Attestations</a>）でリリースへ署名し、**公式ビルドか**をどなたでも検証できます。"
   windowsTitle: Windows で「PC を保護しました」と出た場合
   windowsSteps:
     - "警告画面にある **「詳細情報」** というリンクをクリックします。"

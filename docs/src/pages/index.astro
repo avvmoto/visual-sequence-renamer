@@ -387,7 +387,7 @@ function publicAsset(relativePath: string): string {
           aria-label={fm.trust.title}
         >
           <div
-            class="flex gap-3 border-b border-sky-200/70 bg-sky-100/60 px-5 py-3.5 dark:border-sky-900/40 dark:bg-sky-950/40"
+            class="flex items-center gap-3 border-b border-sky-200/70 bg-sky-100/60 px-5 py-3.5 dark:border-sky-900/40 dark:bg-sky-950/40"
           >
             <span
               class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-200/80 text-sky-800 dark:bg-sky-900/80 dark:text-sky-200"
@@ -401,16 +401,38 @@ function publicAsset(relativePath: string): string {
                 />
               </svg>
             </span>
-            <p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
-              初めてダウンロードしたアプリを実行するとき、Windows や macOS
-              が「PC を保護しました」などのメッセージを出すことがあります。以下に、よくある警告への対処と、オープンソースとして検証できる理由をまとめています。
-            </p>
+            <p
+              class="m-0 min-w-0 flex-1 text-sm leading-snug text-slate-700 dark:text-slate-300 [&_strong]:font-semibold [&_strong]:text-slate-800 dark:[&_strong]:text-slate-200"
+              set:html={inlineBold(
+                "初回起動時に OS から警告が出る理由と、対処法について",
+              )}
+            />
           </div>
           <div class="space-y-8 px-5 py-6 sm:px-8 sm:py-8">
-            <div
-              class="rounded-xl border border-slate-200/80 bg-white/70 px-4 py-4 text-[15px] leading-relaxed text-slate-700 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/35 dark:text-slate-300"
-            >
-              <p class="[&_strong]:font-semibold [&_strong]:text-slate-900 dark:[&_strong]:text-slate-100" set:html={inlineBold(fm.trust.intro)} />
+            <div class="space-y-6">
+              <div
+                class="rounded-xl border border-sky-200/90 bg-sky-50/80 px-4 py-4 text-[15px] leading-relaxed text-slate-700 shadow-sm dark:border-sky-900/40 dark:bg-sky-950/25 dark:text-slate-300"
+              >
+                <h3 class="mb-2 flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
+                  <span
+                    class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sky-200/80 text-sky-800 dark:bg-sky-900/80 dark:text-sky-200"
+                    aria-hidden="true"
+                  >
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </span>
+                  {fm.trust.whyWarning.title}
+                </h3>
+                <p
+                  class="[&_a]:font-medium [&_a]:text-sky-700 [&_a]:underline [&_a]:decoration-sky-400/60 [&_a]:underline-offset-2 hover:[&_a]:text-sky-800 dark:[&_a]:text-sky-300 dark:hover:[&_a]:text-sky-200 [&_strong]:font-semibold [&_strong]:text-slate-900 dark:[&_strong]:text-slate-100"
+                  set:html={inlineBold(fm.trust.whyWarning.body)}
+                />
+              </div>
             </div>
             <div>
               <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
