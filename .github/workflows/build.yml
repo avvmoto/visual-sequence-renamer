@@ -5,6 +5,8 @@ name: CI / CD
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  # runner 既定やキャッシュで古い uv が使われると `uv audit` の引数が合わないため固定する
+  UV_VERSION: "0.11.2"
 
 permissions:
   contents: read
@@ -35,13 +37,13 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
+          version: ${{ env.UV_VERSION }}
 
       - name: Sync dependencies (dev / build / audit)
         run: uv sync --group dev --group build
 
-      # --all-groups は古い uv では未対応のため、sync した dev / build と揃えて指定する
       - name: Audit Python dependencies (uv)
-        run: uv audit --group dev --group build --preview-features audit
+        run: uv audit --all-groups
 
       - name: Setup Node.js (docs audit)
         uses: actions/setup-node@v4
@@ -122,6 +124,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
+          version: ${{ env.UV_VERSION }}
 
       - name: Sync dependencies (runtime + PyInstaller)
         run: uv sync --group build
@@ -170,6 +173,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
+          version: ${{ env.UV_VERSION }}
 
       - name: Sync dependencies (runtime + PyInstaller)
         run: uv sync --group build
