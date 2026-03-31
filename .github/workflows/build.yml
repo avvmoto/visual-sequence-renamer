@@ -1,4 +1,5 @@
 # main プッシュ: テスト・監査・Semantic Release（タグ生成）。
+# main 向け PR（Dependabot 含む）: テスト・監査のみ。
 # build/** プッシュ: テスト成功後に Windows / macOS をビルドし Artifact に ZIP を保存。
 # v* タグプッシュ: テスト成功後に両 OS をビルドし、GitHub Release に ZIP を添付しビルド証明を付与。
 name: CI / CD
@@ -16,6 +17,9 @@ on:
       - "build/**"
     tags:
       - "v*"
+  pull_request:
+    branches:
+      - main
 
 concurrency:
   group: ci-${{ github.ref }}
