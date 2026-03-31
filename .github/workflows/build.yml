@@ -39,8 +39,9 @@ jobs:
       - name: Sync dependencies (dev / build / audit)
         run: uv sync --group dev --group build
 
+      # --all-groups は古い uv では未対応のため、sync した dev / build と揃えて指定する
       - name: Audit Python dependencies (uv)
-        run: uv audit --all-groups --preview-features audit
+        run: uv audit --group dev --group build --preview-features audit
 
       - name: Setup Node.js (docs audit)
         uses: actions/setup-node@v4
