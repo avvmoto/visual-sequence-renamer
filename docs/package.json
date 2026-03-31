@@ -9,13 +9,13 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/tailwind": "^5.1.5",
+    "@astrojs/tailwind": "^6.0.2",
     "@tailwindcss/typography": "^0.5.16",
-    "astro": "^5.18.1",
-    "tailwindcss": "^3.4.17"
+    "astro": "^6.1.2",
+    "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
-    "@types/node": "^22.13.10",
-    "typescript": "^5.8.2"
+    "@types/node": "^25.5.0",
+    "typescript": "^6.0.2"
   }
 }
