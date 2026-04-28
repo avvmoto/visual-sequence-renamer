@@ -26,14 +26,14 @@ app = ["resources/*.png", "resources/*.ico", "resources/*.icns"]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.15.10",
-    "mypy>=1.20.1",
+    "ruff>=0.15.12",
+    "mypy>=1.20.2",
     "pytest>=9.0.3",
     "pytest-qt>=4.4.0",
 ]
 # Windows 用 PyInstaller バンドル専用（テスト・Lint ツールと分離）
 build = [
-    "pyinstaller>=6.0.0",
+    "pyinstaller>=6.20.0",
 ]
 
 [tool.ruff]
